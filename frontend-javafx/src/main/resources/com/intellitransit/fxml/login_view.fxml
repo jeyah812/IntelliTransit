@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.intellitransit.controller.LoginController"
+      alignment="CENTER" spacing="20" styleClass="root"
+      stylesheets="@../css/styles.css">
+
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
+
+    <!-- Brand Logo Header -->
+    <VBox alignment="CENTER" spacing="5">
+        <Text text="INTELLITRANSIT" styleClass="text-header" style="-fx-fill: #6366F1; -fx-font-size: 32px;"/>
+        <Text text="Smart Public Transport &amp; Operational Anomaly Management" styleClass="text-subtitle"/>
+    </VBox>
+
+    <!-- Auth Card Container -->
+    <VBox prefWidth="440" maxWidth="440" styleClass="card-highlight" spacing="15">
+        <TabPane fx:id="authTabPane" tabClosingPolicy="UNAVAILABLE">
+            
+            <!-- Login Tab -->
+            <Tab text="Sign In">
+                <VBox spacing="15">
+                    <padding>
+                        <Insets top="20" right="10" bottom="10" left="10"/>
+                    </padding>
+                    
+                    <VBox spacing="5">
+                        <Label text="Username or Email" styleClass="text-subtitle"/>
+                        <TextField fx:id="loginUsernameField" promptText="Enter your username"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Password" styleClass="text-subtitle"/>
+                        <PasswordField fx:id="loginPasswordField" promptText="Enter your password"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Select Role" styleClass="text-subtitle"/>
+                        <ComboBox fx:id="loginRoleCombo" maxWidth="INFINITY"/>
+                    </VBox>
+
+                    <Button text="Sign In to IntelliTransit" onAction="#handleLogin"
+                            styleClass="btn-primary" maxWidth="INFINITY"/>
+                </VBox>
+            </Tab>
+
+            <!-- Register Tab -->
+            <Tab text="Register Account">
+                <VBox spacing="12">
+                    <padding>
+                        <Insets top="15" right="10" bottom="10" left="10"/>
+                    </padding>
+
+                    <VBox spacing="4">
+                        <Label text="Username" styleClass="text-subtitle"/>
+                        <TextField fx:id="regUsernameField" promptText="Choose a username"/>
+                    </VBox>
+
+                    <VBox spacing="4">
+                        <Label text="Email Address" styleClass="text-subtitle"/>
+                        <TextField fx:id="regEmailField" promptText="name@example.com"/>
+                    </VBox>
+
+                    <VBox spacing="4">
+                        <Label text="Full Name" styleClass="text-subtitle"/>
+                        <TextField fx:id="regFullNameField" promptText="John Doe"/>
+                    </VBox>
+
+                    <VBox spacing="4">
+                        <Label text="Phone Number" styleClass="text-subtitle"/>
+                        <TextField fx:id="regPhoneField" promptText="+1 234 567 8900"/>
+                    </VBox>
+
+                    <VBox spacing="4">
+                        <Label text="Password" styleClass="text-subtitle"/>
+                        <PasswordField fx:id="regPasswordField" promptText="Create a secure password"/>
+                    </VBox>
+
+                    <VBox spacing="4">
+                        <Label text="Account Role" styleClass="text-subtitle"/>
+                        <ComboBox fx:id="regRoleCombo" maxWidth="INFINITY"/>
+                    </VBox>
+
+                    <Button text="Create Account" onAction="#handleRegister"
+                            styleClass="btn-success" maxWidth="INFINITY"/>
+                </VBox>
+            </Tab>
+
+        </TabPane>
+
+        <Label fx:id="statusLabel" alignment="CENTER" maxWidth="INFINITY" wrapText="true"/>
+    </VBox>
+
+</VBox>

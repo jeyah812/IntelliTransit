@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.intellitransit.controller.DriverDashboardController"
+      spacing="20" styleClass="root" stylesheets="@../css/styles.css">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <!-- Top Card: Assigned Trips & Controls -->
+    <VBox spacing="15" styleClass="card" VBox.vgrow="ALWAYS">
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <Text text="Assigned Driver Trips &amp; Execution" styleClass="text-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="selectedTripLabel" styleClass="text-accent"/>
+        </HBox>
+
+        <TableView fx:id="tripsTable" VBox.vgrow="ALWAYS" prefHeight="200">
+            <columns>
+                <TableColumn fx:id="colTripId" text="Trip ID" prefWidth="70"/>
+                <TableColumn fx:id="colRoute" text="Route" prefWidth="180"/>
+                <TableColumn fx:id="colBus" text="Bus" prefWidth="100"/>
+                <TableColumn fx:id="colStart" text="Scheduled Start" prefWidth="160"/>
+                <TableColumn fx:id="colEnd" text="Scheduled End" prefWidth="160"/>
+                <TableColumn fx:id="colStatus" text="Status" prefWidth="120"/>
+            </columns>
+        </TableView>
+
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <Button text="Start Selected Trip" onAction="#handleStartTrip" styleClass="btn-primary"/>
+            <Button text="End Selected Trip" onAction="#handleEndTrip" styleClass="btn-success"/>
+            <Label fx:id="tripActionStatusLabel" wrapText="true"/>
+        </HBox>
+    </VBox>
+
+    <HBox spacing="20">
+        <!-- Bottom Left: QR Scanner & Validator Simulation -->
+        <VBox spacing="15" HBox.hgrow="ALWAYS" styleClass="card-highlight">
+            <Text text="Passenger QR Ticket Validator" styleClass="text-title"/>
+            <Label text="Scan or paste passenger ticket QR payload string / ticket number:" styleClass="text-subtitle"/>
+            <TextField fx:id="qrInputArea" promptText="Paste raw QR JSON payload or Ticket Number (e.g., TK-...)"/>
+            <Button text="Verify Ticket QR" onAction="#handleVerifyTicket" styleClass="btn-primary" maxWidth="180"/>
+            <Label fx:id="qrVerifyResultLabel" wrapText="true"/>
+        </VBox>
+
+        <!-- Bottom Right: Trip Incident Notes -->
+        <VBox spacing="10" prefWidth="380" styleClass="card">
+            <Text text="Incident / Delay Notes" styleClass="text-title"/>
+            <Label text="Notes are recorded in the official TripLog on trip end:" styleClass="text-subtitle"/>
+            <TextArea fx:id="incidentNotesArea" prefRowCount="3" promptText="Log any delays, traffic anomalies, or incident notes..."/>
+        </VBox>
+    </HBox>
+</VBox>

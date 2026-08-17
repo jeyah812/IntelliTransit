@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.intellitransit.controller.MainDashboardController"
+            styleClass="root" stylesheets="@../css/styles.css">
+
+    <!-- Top Header Bar -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="top-bar">
+            <VBox spacing="2">
+                <Text text="INTELLITRANSIT" styleClass="text-header" style="-fx-fill: #6366F1; -fx-font-size: 20px;"/>
+                <Text text="Enterprise Public Transport Platform" styleClass="text-subtitle"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <HBox alignment="CENTER" spacing="12">
+                <Label fx:id="roleBadgeLabel" styleClass="user-badge"/>
+                <Label fx:id="usernameLabel" style="-fx-text-fill: #F8FAFC; -fx-font-weight: bold;"/>
+                <Button text="Sign Out" onAction="#handleLogout" styleClass="btn-secondary"/>
+            </HBox>
+        </HBox>
+    </top>
+
+    <!-- Sidebar Navigation -->
+    <left>
+        <VBox fx:id="sidebarNav" spacing="10" styleClass="sidebar">
+            <!-- Dynamically populated based on role -->
+        </VBox>
+    </left>
+
+    <!-- Center Content Workspace -->
+    <center>
+        <StackPane fx:id="contentArea">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+        </StackPane>
+    </center>
+
+</BorderPane>

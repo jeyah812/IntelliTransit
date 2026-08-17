@@ -1,0 +1,64 @@
+# Target and Build directories
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# IDE & Editor files
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+*.factorypath
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Python / AI Service
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.env
+
+# Database & Logs
+*.log
+*.sqlite3
+*.db
+
+# Application Scratch & Temp
+scratch/
+.mvn/
+mvnw
+mvnw.cmd
+# Local application configuration / secrets
+application-local.properties
+application-local.yml
+application-local.yaml

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.intellitransit.controller.ManagerDashboardController"
+      spacing="20" styleClass="root" stylesheets="@../css/styles.css">
+
+    <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        
+        <!-- Tab 1: Fleet Management (Buses) -->
+        <Tab text="Fleet Management (Buses)">
+            <HBox spacing="20">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+
+                <!-- Buses Table -->
+                <VBox spacing="10" HBox.hgrow="ALWAYS" styleClass="card">
+                    <Text text="Registered Fleet Buses" styleClass="text-title"/>
+                    <TableView fx:id="busesTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colBusReg" text="Registration #" prefWidth="130"/>
+                            <TableColumn fx:id="colBusNum" text="Bus #" prefWidth="100"/>
+                            <TableColumn fx:id="colBusModel" text="Model" prefWidth="120"/>
+                            <TableColumn fx:id="colBusCap" text="Capacity" prefWidth="90"/>
+                            <TableColumn fx:id="colBusStatus" text="Status" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <!-- Add Bus Form Card -->
+                <VBox spacing="12" prefWidth="320" styleClass="card-highlight">
+                    <Text text="Add Fleet Bus" styleClass="text-title"/>
+                    
+                    <VBox spacing="4">
+                        <Label text="Registration Number" styleClass="text-subtitle"/>
+                        <TextField fx:id="busRegField" promptText="e.g. KA-01-F-1234"/>
+                    </VBox>
+
+                    <VBox spacing="4">
+                        <Label text="Bus Code / Number" styleClass="text-subtitle"/>
+                        <TextField fx:id="busNumField" promptText="e.g. BUS-101"/>
+                    </VBox>
+
+                    <VBox spacing="4">
+                        <Label text="Vehicle Model" styleClass="text-subtitle"/>
+                        <TextField fx:id="busModelField" promptText="e.g. Volvo B9R"/>
+                    </VBox>
+
+                    <VBox spacing="4">
+                        <Label text="Seating Capacity" styleClass="text-subtitle"/>
+                        <TextField fx:id="busCapField" promptText="e.g. 50"/>
+                    </VBox>
+
+                    <Button text="Register Bus" onAction="#handleAddBus" styleClass="btn-primary" maxWidth="INFINITY"/>
+                    <Label fx:id="busStatusLabel" wrapText="true"/>
+                </VBox>
+            </HBox>
+        </Tab>
+
+        <!-- Tab 2: Driver Roster & Status -->
+        <Tab text="Driver Roster &amp; Status">
+            <VBox spacing="15" styleClass="card">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+                
+                <Text text="Driver Profiles &amp; Real-time Availability Status" styleClass="text-title"/>
+
+                <TableView fx:id="driversTable" VBox.vgrow="ALWAYS" prefHeight="350">
+                    <columns>
+                        <TableColumn fx:id="colEmpId" text="Employee ID" prefWidth="120"/>
+                        <TableColumn fx:id="colDriverName" text="Driver Full Name" prefWidth="160"/>
+                        <TableColumn fx:id="colDriverPhone" text="Phone" prefWidth="130"/>
+                        <TableColumn fx:id="colDriverLicense" text="License #" prefWidth="140"/>
+                        <TableColumn fx:id="colDriverStatus" text="Driver Status" prefWidth="120"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- Tab 3: Route & Stop Setup -->
+        <Tab text="Routes &amp; Stop Setup">
+            <HBox spacing="20">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+
+                <!-- Routes Table -->
+                <VBox spacing="10" HBox.hgrow="ALWAYS" styleClass="card">
+                    <Text text="Configured Transit Routes" styleClass="text-title"/>
+                    <TableView fx:id="routesTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colRouteNum" text="Route #" prefWidth="90"/>
+                            <TableColumn fx:id="colRouteName" text="Route Name" prefWidth="140"/>
+                            <TableColumn fx:id="colRouteOrigin" text="Origin" prefWidth="120"/>
+                            <TableColumn fx:id="colRouteDest" text="Destination" prefWidth="120"/>
+                            <TableColumn fx:id="colRouteDist" text="Distance" prefWidth="90"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <!-- Forms Column -->
+                <VBox spacing="15" prefWidth="340">
+                    <!-- Add Route Card -->
+                    <VBox spacing="8" styleClass="card-highlight">
+                        <Text text="Add Route" styleClass="text-title"/>
+                        <TextField fx:id="routeNumField" promptText="Route # (e.g. R101)"/>
+                        <TextField fx:id="routeNameField" promptText="Route Name (e.g. City Express)"/>
+                        <HBox spacing="5">
+                            <TextField fx:id="routeOriginField" promptText="Origin Stop" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="routeDestField" promptText="Destination Stop" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                        <HBox spacing="5">
+                            <TextField fx:id="routeDistField" promptText="Dist (km)" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="routeDurField" promptText="Est. Mins" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                        <Button text="Create Route" onAction="#handleAddRoute" styleClass="btn-primary" maxWidth="INFINITY"/>
+                        <Label fx:id="routeStatusLabel" wrapText="true"/>
+                    </VBox>
+
+                    <!-- Add Stop Card -->
+                    <VBox spacing="8" styleClass="card">
+                        <Text text="Add Stop Location" styleClass="text-title"/>
+                        <TextField fx:id="stopNameField" promptText="Stop Name"/>
+                        <HBox spacing="5">
+                            <TextField fx:id="stopLatField" promptText="Latitude (e.g. 12.9716)" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="stopLngField" promptText="Longitude (e.g. 77.5946)" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                        <Button text="Create Stop" onAction="#handleAddStop" styleClass="btn-secondary" maxWidth="INFINITY"/>
+                        <Label fx:id="stopStatusLabel" wrapText="true"/>
+                    </VBox>
+                </VBox>
+            </HBox>
+        </Tab>
+
+        <!-- Tab 4: Trip Scheduler -->
+        <Tab text="Schedule Operational Trip">
+            <VBox spacing="15" styleClass="card-highlight" maxWidth="500">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+                
+                <Text text="Assign Fleet &amp; Schedule New Trip" styleClass="text-title"/>
+
+                <VBox spacing="5">
+                    <Label text="Select Route" styleClass="text-subtitle"/>
+                    <ComboBox fx:id="schedRouteCombo" maxWidth="INFINITY"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Assign Bus" styleClass="text-subtitle"/>
+                    <ComboBox fx:id="schedBusCombo" maxWidth="INFINITY"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Assign Available Driver" styleClass="text-subtitle"/>
+                    <ComboBox fx:id="schedDriverCombo" maxWidth="INFINITY"/>
+                </VBox>
+
+                <Button text="Confirm &amp; Schedule Trip" onAction="#handleScheduleTrip" styleClass="btn-success" maxWidth="INFINITY"/>
+                <Label fx:id="schedStatusLabel" wrapText="true"/>
+            </VBox>
+        </Tab>
+
+        <!-- Tab 5: Live Operational Trip Logs -->
+        <Tab text="Operational Trip Logs &amp; Audit">
+            <VBox spacing="15" styleClass="card">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+                
+                <Text text="Recorded Trip Logs &amp; Incident Audits" styleClass="text-title"/>
+
+                <TableView fx:id="tripLogsTable" VBox.vgrow="ALWAYS" prefHeight="350">
+                    <columns>
+                        <TableColumn fx:id="colLogId" text="Log ID" prefWidth="70"/>
+                        <TableColumn fx:id="colLogTrip" text="Trip ID" prefWidth="70"/>
+                        <TableColumn fx:id="colLogRoute" text="Route #" prefWidth="90"/>
+                        <TableColumn fx:id="colLogStart" text="Actual Start" prefWidth="160"/>
+                        <TableColumn fx:id="colLogEnd" text="Actual End" prefWidth="160"/>
+                        <TableColumn fx:id="colLogDuration" text="Duration" prefWidth="100"/>
+                        <TableColumn fx:id="colLogNotes" text="Operational Notes" prefWidth="250"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+    </TabPane>
+</VBox>

@@ -1,0 +1,275 @@
+/* ============================================================================
+   INTELLITRANSIT — SMART TRANSPORT MANAGEMENT ENTERPRISE STYLESHEET
+   Visual Theme: Dark Slate (#0F172A), Vivid Indigo (#6366F1), Emerald Accent (#10B981)
+   ============================================================================ */
+
+.root {
+    -fx-font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    -fx-background-color: #0F172A;
+    -fx-text-fill: #F8FAFC;
+}
+
+/* --- Typography & Headers --- */
+.text-header {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-fill: #F8FAFC;
+}
+
+.text-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-fill: #F8FAFC;
+}
+
+.text-subtitle {
+    -fx-font-size: 13px;
+    -fx-fill: #94A3B8;
+}
+
+.text-accent {
+    -fx-fill: #6366F1;
+    -fx-font-weight: bold;
+}
+
+/* --- Top Bar & Header --- */
+.top-bar {
+    -fx-background-color: #1E293B;
+    -fx-border-color: #334155;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 12 24 12 24;
+}
+
+.user-badge {
+    -fx-background-color: rgba(99, 102, 241, 0.15);
+    -fx-border-color: #6366F1;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-padding: 4 12 4 12;
+    -fx-text-fill: #818CF8;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    -fx-background-color: #1E293B;
+    -fx-border-color: #334155;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 20 12 20 12;
+    -fx-pref-width: 240px;
+}
+
+.nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #94A3B8;
+    -fx-font-size: 14px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 12 16 12 16;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-pref-width: 216px;
+}
+
+.nav-btn:hover {
+    -fx-background-color: rgba(51, 65, 85, 0.5);
+    -fx-text-fill: #F8FAFC;
+}
+
+.nav-btn-active {
+    -fx-background-color: rgba(99, 102, 241, 0.2);
+    -fx-text-fill: #818CF8;
+    -fx-font-weight: bold;
+    -fx-border-color: #6366F1;
+    -fx-border-width: 0 0 0 4;
+}
+
+/* --- Cards & Panels --- */
+.card {
+    -fx-background-color: #1E293B;
+    -fx-border-color: #334155;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 4);
+}
+
+.card-highlight {
+    -fx-background-color: #1E293B;
+    -fx-border-color: #6366F1;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(99, 102, 241, 0.25), 12, 0, 0, 4);
+}
+
+/* --- Form Controls --- */
+.text-field, .password-field, .combo-box, .date-picker, .text-area {
+    -fx-background-color: #0F172A;
+    -fx-text-fill: #F8FAFC;
+    -fx-border-color: #334155;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 8 12 8 12;
+    -fx-font-size: 13px;
+}
+
+.text-field:focused, .password-field:focused, .combo-box:focused, .text-area:focused {
+    -fx-border-color: #6366F1;
+    -fx-effect: dropshadow(two-pass-box, rgba(99, 102, 241, 0.4), 6, 0, 0, 0);
+}
+
+.combo-box .list-cell {
+    -fx-background-color: #1E293B;
+    -fx-text-fill: #F8FAFC;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #1E293B;
+    -fx-border-color: #334155;
+}
+
+/* --- Buttons --- */
+.btn-primary {
+    -fx-background-color: #6366F1;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 9 18 9 18;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #4F46E5;
+}
+
+.btn-success {
+    -fx-background-color: #10B981;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 9 18 9 18;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.btn-success:hover {
+    -fx-background-color: #059669;
+}
+
+.btn-secondary {
+    -fx-background-color: #334155;
+    -fx-text-fill: #F8FAFC;
+    -fx-font-size: 13px;
+    -fx-padding: 9 18 9 18;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #475569;
+}
+
+.btn-danger {
+    -fx-background-color: #EF4444;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 9 18 9 18;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.btn-danger:hover {
+    -fx-background-color: #DC2626;
+}
+
+/* --- Table Views --- */
+.table-view {
+    -fx-background-color: #1E293B;
+    -fx-border-color: #334155;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #0F172A;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: #334155;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 10px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #94A3B8;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: #1E293B;
+    -fx-border-color: #334155;
+    -fx-border-width: 0 0 1 0;
+    -fx-text-fill: #F8FAFC;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: #182234;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: rgba(99, 102, 241, 0.15);
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: rgba(99, 102, 241, 0.3);
+    -fx-text-fill: #FFFFFF;
+}
+
+.table-cell {
+    -fx-text-fill: #F8FAFC;
+    -fx-font-size: 13px;
+    -fx-padding: 8px;
+}
+
+/* --- Status Labels & Badges --- */
+.status-pill-active {
+    -fx-background-color: rgba(16, 185, 129, 0.2);
+    -fx-text-fill: #34D399;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 12px;
+}
+
+.status-pill-progress {
+    -fx-background-color: rgba(245, 158, 11, 0.2);
+    -fx-text-fill: #FBBF24;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 12px;
+}
+
+.status-pill-used {
+    -fx-background-color: rgba(148, 163, 184, 0.2);
+    -fx-text-fill: #94A3B8;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 12px;
+}
+
+.alert-label-success {
+    -fx-text-fill: #34D399;
+    -fx-font-weight: bold;
+}
+
+.alert-label-error {
+    -fx-text-fill: #F87171;
+    -fx-font-weight: bold;
+}
