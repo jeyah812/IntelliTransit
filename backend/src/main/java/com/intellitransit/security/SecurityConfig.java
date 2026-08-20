@@ -56,7 +56,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**", "/h2-console/**", "/api/fares/calculate", "/api/routes/**", "/api/stops/**", "/api/tickets/*/qr-image").permitAll()
                         .requestMatchers("/api/passenger/**").hasAnyRole("PASSENGER", "OPERATIONS_MANAGER")
                         .requestMatchers("/api/driver/**").hasAnyRole("DRIVER", "OPERATIONS_MANAGER")
-                        .requestMatchers("/api/operations/**", "/api/manager/**", "/api/fleet/**").hasRole("OPERATIONS_MANAGER")
+                        .requestMatchers("/api/operations/**", "/api/manager/**", "/api/fleet/**", "/api/analytics/**").hasRole("OPERATIONS_MANAGER")
                         .anyRequest().authenticated()
                 );
 
