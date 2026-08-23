@@ -1,6 +1,9 @@
 package com.intellitransit.service;
 
 import com.intellitransit.dto.AnalyticsDTO;
+import com.intellitransit.dto.AnalyticsPredictionDTO;
+import com.intellitransit.entity.enums.AlertSeverity;
+import com.intellitransit.entity.enums.AlertStatus;
 import com.intellitransit.entity.enums.TicketStatus;
 import com.intellitransit.entity.enums.TripStatus;
 import com.intellitransit.repository.*;
@@ -40,6 +43,15 @@ class AnalyticsServiceTest {
     @Mock
     private BusRepository busRepository;
 
+    @Mock
+    private AIAlertRepository aiAlertRepository;
+
+    @Mock
+    private ComplaintRepository complaintRepository;
+
+    @Mock
+    private TripLogRepository tripLogRepository;
+
     @InjectMocks
     private AnalyticsServiceImpl analyticsService;
 
@@ -70,5 +82,28 @@ class AnalyticsServiceTest {
         assertEquals(30L, metrics.getActiveTickets());
         assertEquals(10L, metrics.getTotalDrivers());
         assertEquals(12L, metrics.getTotalBuses());
+    }
+
+    @Test
+    @DisplayName("Should return smart dashboard metrics correctly from repository counts and average duration")
+    void testGetSmartDashboardMetricsSuccess() {
+        when(aiAlertRepository.count()).thenReturn(12L);
+        when(aiAlertRepository.countByStatus(AlertStatus.NEW)).thenReturn(4L);
+        when(aiAlertRepository.countBySeverity(AlertSeverity.HIGH)).thenReturn(2L);
+        when(tripRepository.countByStatus(TripStatus.COMPLETED)).thenReturn(25L);
+        when(tripLogRepository.findAverageTripDurationMinutes()).thenReturn(42.345);
+        when(complaintRepository.count()).thenReturn(8L);
+        when(bookingRepository.count()).thenReturn(150L);
+
+        AnalyticsPredictionDTO metrics = analyticsService.getSmartDashboardMetrics();
+
+        assertNotNull(metrics);
+        assertEquals(12L, metrics.getTotalAlerts());
+        assertEquals(4L, metrics.getOpenAlerts());
+        assertEquals(2L, metrics.getHighSeverityAlerts());
+        assertEquals(25L, metrics.getCompletedTrips());
+        assertEquals(42.35, metrics.getAverageTripDuration());
+        assertEquals(8L, metrics.getComplaintCount());
+        assertEquals(150L, metrics.getBookingCount());
     }
 }
