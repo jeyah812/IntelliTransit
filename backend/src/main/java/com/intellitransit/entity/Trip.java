@@ -13,6 +13,9 @@ public class Trip {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "gtfs_trip_id", length = 100)
+    private String gtfsTripId;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "route_id", nullable = false)
     private Route route;
@@ -46,8 +49,9 @@ public class Trip {
 
     public Trip() {}
 
-    public Trip(Long id, Route route, Bus bus, Driver driver, LocalDateTime scheduledStart, LocalDateTime scheduledEnd, LocalDateTime actualStart, LocalDateTime actualEnd, TripStatus status, LocalDateTime createdAt) {
+    public Trip(Long id, String gtfsTripId, Route route, Bus bus, Driver driver, LocalDateTime scheduledStart, LocalDateTime scheduledEnd, LocalDateTime actualStart, LocalDateTime actualEnd, TripStatus status, LocalDateTime createdAt) {
         this.id = id;
+        this.gtfsTripId = gtfsTripId;
         this.route = route;
         this.bus = bus;
         this.driver = driver;
@@ -57,6 +61,10 @@ public class Trip {
         this.actualEnd = actualEnd;
         this.status = status != null ? status : TripStatus.SCHEDULED;
         this.createdAt = createdAt;
+    }
+
+    public Trip(Long id, Route route, Bus bus, Driver driver, LocalDateTime scheduledStart, LocalDateTime scheduledEnd, LocalDateTime actualStart, LocalDateTime actualEnd, TripStatus status, LocalDateTime createdAt) {
+        this(id, null, route, bus, driver, scheduledStart, scheduledEnd, actualStart, actualEnd, status, createdAt);
     }
 
     @PrePersist
@@ -70,6 +78,9 @@ public class Trip {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getGtfsTripId() { return gtfsTripId; }
+    public void setGtfsTripId(String gtfsTripId) { this.gtfsTripId = gtfsTripId; }
 
     public Route getRoute() { return route; }
     public void setRoute(Route route) { this.route = route; }
@@ -100,6 +111,7 @@ public class Trip {
 
     public static class TripBuilder {
         private Long id;
+        private String gtfsTripId;
         private Route route;
         private Bus bus;
         private Driver driver;
@@ -111,6 +123,7 @@ public class Trip {
         private LocalDateTime createdAt;
 
         public TripBuilder id(Long id) { this.id = id; return this; }
+        public TripBuilder gtfsTripId(String gtfsTripId) { this.gtfsTripId = gtfsTripId; return this; }
         public TripBuilder route(Route route) { this.route = route; return this; }
         public TripBuilder bus(Bus bus) { this.bus = bus; return this; }
         public TripBuilder driver(Driver driver) { this.driver = driver; return this; }
@@ -122,7 +135,7 @@ public class Trip {
         public TripBuilder createdAt(LocalDateTime createdAt) { this.createdAt = createdAt; return this; }
 
         public Trip build() {
-            return new Trip(id, route, bus, driver, scheduledStart, scheduledEnd, actualStart, actualEnd, status, createdAt);
+            return new Trip(id, gtfsTripId, route, bus, driver, scheduledStart, scheduledEnd, actualStart, actualEnd, status, createdAt);
         }
     }
 }

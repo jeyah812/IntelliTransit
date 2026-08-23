@@ -13,7 +13,16 @@ public class Route {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "route_number", nullable = false, unique = true, length = 30)
+    @Column(name = "gtfs_route_id", length = 100)
+    private String gtfsRouteId;
+
+    @Column(name = "feed_id", length = 50)
+    private String feedId;
+
+    @Column(name = "feed_version", length = 50)
+    private String feedVersion;
+
+    @Column(name = "route_number", nullable = false, unique = true, length = 100)
     private String routeNumber;
 
     @Column(name = "route_name", nullable = false, length = 100)
@@ -39,8 +48,11 @@ public class Route {
 
     public Route() {}
 
-    public Route(Long id, String routeNumber, String routeName, String origin, String destination, BigDecimal distanceKm, Integer estimatedDurationMinutes, boolean active, LocalDateTime createdAt) {
+    public Route(Long id, String gtfsRouteId, String feedId, String feedVersion, String routeNumber, String routeName, String origin, String destination, BigDecimal distanceKm, Integer estimatedDurationMinutes, boolean active, LocalDateTime createdAt) {
         this.id = id;
+        this.gtfsRouteId = gtfsRouteId;
+        this.feedId = feedId;
+        this.feedVersion = feedVersion;
         this.routeNumber = routeNumber;
         this.routeName = routeName;
         this.origin = origin;
@@ -49,6 +61,14 @@ public class Route {
         this.estimatedDurationMinutes = estimatedDurationMinutes;
         this.active = active;
         this.createdAt = createdAt;
+    }
+
+    public Route(Long id, String gtfsRouteId, String feedVersion, String routeNumber, String routeName, String origin, String destination, BigDecimal distanceKm, Integer estimatedDurationMinutes, boolean active, LocalDateTime createdAt) {
+        this(id, gtfsRouteId, "MTC", feedVersion, routeNumber, routeName, origin, destination, distanceKm, estimatedDurationMinutes, active, createdAt);
+    }
+
+    public Route(Long id, String routeNumber, String routeName, String origin, String destination, BigDecimal distanceKm, Integer estimatedDurationMinutes, boolean active, LocalDateTime createdAt) {
+        this(id, null, "MTC", "2.0", routeNumber, routeName, origin, destination, distanceKm, estimatedDurationMinutes, active, createdAt);
     }
 
     @PrePersist
@@ -62,6 +82,15 @@ public class Route {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getGtfsRouteId() { return gtfsRouteId; }
+    public void setGtfsRouteId(String gtfsRouteId) { this.gtfsRouteId = gtfsRouteId; }
+
+    public String getFeedId() { return feedId; }
+    public void setFeedId(String feedId) { this.feedId = feedId; }
+
+    public String getFeedVersion() { return feedVersion; }
+    public void setFeedVersion(String feedVersion) { this.feedVersion = feedVersion; }
 
     public String getRouteNumber() { return routeNumber; }
     public void setRouteNumber(String routeNumber) { this.routeNumber = routeNumber; }
@@ -89,6 +118,9 @@ public class Route {
 
     public static class RouteBuilder {
         private Long id;
+        private String gtfsRouteId;
+        private String feedId = "MTC";
+        private String feedVersion = "2.0";
         private String routeNumber;
         private String routeName;
         private String origin;
@@ -99,6 +131,9 @@ public class Route {
         private LocalDateTime createdAt;
 
         public RouteBuilder id(Long id) { this.id = id; return this; }
+        public RouteBuilder gtfsRouteId(String gtfsRouteId) { this.gtfsRouteId = gtfsRouteId; return this; }
+        public RouteBuilder feedId(String feedId) { this.feedId = feedId; return this; }
+        public RouteBuilder feedVersion(String feedVersion) { this.feedVersion = feedVersion; return this; }
         public RouteBuilder routeNumber(String routeNumber) { this.routeNumber = routeNumber; return this; }
         public RouteBuilder routeName(String routeName) { this.routeName = routeName; return this; }
         public RouteBuilder origin(String origin) { this.origin = origin; return this; }
@@ -109,7 +144,7 @@ public class Route {
         public RouteBuilder createdAt(LocalDateTime createdAt) { this.createdAt = createdAt; return this; }
 
         public Route build() {
-            return new Route(id, routeNumber, routeName, origin, destination, distanceKm, estimatedDurationMinutes, active, createdAt);
+            return new Route(id, gtfsRouteId, feedId, feedVersion, routeNumber, routeName, origin, destination, distanceKm, estimatedDurationMinutes, active, createdAt);
         }
     }
 }

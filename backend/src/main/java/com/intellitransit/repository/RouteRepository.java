@@ -10,5 +10,8 @@ import java.util.Optional;
 @Repository
 public interface RouteRepository extends JpaRepository<Route, Long> {
     Optional<Route> findByRouteNumber(String routeNumber);
+    Optional<Route> findByGtfsRouteId(String gtfsRouteId);
+    Optional<Route> findByGtfsRouteIdAndFeedVersion(String gtfsRouteId, String feedVersion);
+    Optional<Route> findByGtfsRouteIdAndFeedIdAndFeedVersion(String gtfsRouteId, String feedId, String feedVersion);
     List<Route> findByActive(boolean active);
 }
