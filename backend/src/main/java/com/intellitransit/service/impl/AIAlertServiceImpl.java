@@ -1,5 +1,6 @@
 package com.intellitransit.service.impl;
 
+import com.intellitransit.dto.AIAlertDTO;
 import com.intellitransit.entity.AIAlert;
 import com.intellitransit.entity.Booking;
 import com.intellitransit.entity.Complaint;
@@ -21,6 +22,7 @@ import java.math.RoundingMode;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AIAlertServiceImpl implements AIAlertService {
@@ -42,7 +44,7 @@ public class AIAlertServiceImpl implements AIAlertService {
 
     @Override
     @Transactional
-    public List<AIAlert> runAnomalyDetection() {
+    public List<AIAlertDTO> runAnomalyDetection() {
         List<AIAlert> generatedAlerts = new ArrayList<>();
         List<Trip> trips = tripRepository.findAll();
 
@@ -121,18 +123,40 @@ public class AIAlertServiceImpl implements AIAlertService {
             }
         }
 
-        return generatedAlerts;
+        return generatedAlerts.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<AIAlert> getAllAlerts() {
-        return aiAlertRepository.findAll();
+    public List<AIAlertDTO> getAllAlerts() {
+        return aiAlertRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<AIAlert> getNewAlerts() {
-        return aiAlertRepository.findByStatus(AlertStatus.NEW);
+    public List<AIAlertDTO> getNewAlerts() {
+        return aiAlertRepository.findByStatus(AlertStatus.NEW).stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+
+    private AIAlertDTO mapToDTO(AIAlert alert) {
+        if (alert == null) return null;
+        Long tripId = alert.getTrip() != null ? alert.getTrip().getId() : null;
+        String gtfsTripId = alert.getTrip() != null ? alert.getTrip().getGtfsTripId() : null;
+        String routeNumber = (alert.getTrip() != null && alert.getTrip().getRoute() != null)
+                ? alert.getTrip().getRoute().getRouteNumber() : null;
+
+        return AIAlertDTO.builder()
+                .id(alert.getId())
+                .tripId(tripId)
+                .gtfsTripId(gtfsTripId)
+                .routeNumber(routeNumber)
+                .alertType(alert.getAlertType())
+                .severity(alert.getSeverity())
+                .anomalyScore(alert.getAnomalyScore())
+                .detectedAt(alert.getDetectedAt())
+                .explanation(alert.getExplanation())
+                .recommendation(alert.getRecommendation())
+                .status(alert.getStatus())
+                .build();
     }
 }

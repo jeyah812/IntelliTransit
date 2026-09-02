@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliTransit — Passenger Portal</title>
+    <!-- Inter Font & Lucide Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --primary-light: #f0f9ff;
+            --primary-border: #bae6fd;
+            --secondary: #0f172a;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-subtle: #94a3b8;
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            
+            --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+            --shadow-lg: 0 12px 28px -4px rgba(15, 23, 42, 0.12);
+            --shadow-glow: 0 0 20px rgba(2, 132, 199, 0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.04) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.04) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* LOGIN OVERLAY */
+        #login-view {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0f172a 0%, #0369a1 50%, #0284c7 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .login-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .brand-icon {
+            width: 46px;
+            height: 46px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-cyan) 100%);
+            color: white;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+        }
+
+        .login-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        .login-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 7px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 11px 14px;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            outline: none;
+            background: #ffffff;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #0369a1 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            background: #94a3b8;
+            box-shadow: none;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-border);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .login-error {
+            background-color: #fef2f2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            margin-bottom: 18px;
+            display: none;
+            border: 1px solid #fecaca;
+            font-weight: 500;
+        }
+
+        /* HEADER NAV */
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--secondary);
+            text-decoration: none;
+            cursor: pointer;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-brand span {
+            color: var(--primary);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-emerald);
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulseDot 2s infinite ease-in-out;
+            margin-left: 6px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            width: 100%;
+            flex: 1;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.01em;
+        }
+
+        /* HERO BANNER */
+        .hero-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #0369a1 60%, #0284c7 100%);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: 36px 40px;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-banner h1 {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-banner p {
+            color: #bae6fd;
+            font-size: 15px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .hero-tags {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .hero-tag {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* QUICK ACTION CARDS */
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+        }
+
+        .action-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .action-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-glow);
+            background: var(--primary-light);
+        }
+
+        .action-icon-badge {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .action-card-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .action-card-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* STEP BY STEP JOURNEY FLOW */
+        .journey-flow-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: var(--primary-light);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--primary-border);
+            overflow-x: auto;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .flow-step.active {
+            color: var(--primary);
+        }
+
+        .flow-step-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .flow-step.active .flow-step-num {
+            background: var(--primary);
+            color: white;
+        }
+
+        .flow-arrow {
+            color: var(--text-subtle);
+            font-weight: 800;
+        }
+
+        /* FARE RESULT FOCAL POINT */
+        .fare-result-card {
+            display: none;
+            margin-top: 24px;
+            padding: 24px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--primary-light) 100%);
+            border-radius: var(--radius-md);
+            border: 2px solid var(--primary);
+            box-shadow: var(--shadow-glow);
+            animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .fare-amount-large {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        .fare-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--primary-border);
+        }
+
+        .fare-detail-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .fare-detail-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .fare-detail-val {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* DIGITAL TRANSIT TICKET PASS */
+        .transit-pass-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            max-width: 440px;
+            margin: 0 auto 24px auto;
+            position: relative;
+            overflow: hidden;
+            animation: scaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .pass-header {
+            background: linear-gradient(135deg, #0f172a 0%, #0284c7 100%);
+            color: white;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pass-route-name {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .pass-ref {
+            font-size: 12px;
+            color: #bae6fd;
+            font-family: monospace;
+            font-weight: 700;
+        }
+
+        .pass-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: #ffffff;
+            position: relative;
+        }
+
+        /* Ticket Side Notches */
+        .pass-body::before, .pass-body::after {
+            content: '';
+            position: absolute;
+            top: -12px;
+            width: 24px;
+            height: 24px;
+            background: var(--bg-body);
+            border-radius: 50%;
+        }
+        .pass-body::before { left: -12px; }
+        .pass-body::after { right: -12px; }
+
+        .qr-wrapper {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 16px;
+            border: 2px solid var(--primary-border);
+            box-shadow: 0 4px 16px rgba(2, 132, 199, 0.12);
+            margin: 16px 0;
+            display: inline-block;
+        }
+
+        .qr-img {
+            width: 200px;
+            height: 200px;
+            border-radius: 8px;
+            display: block;
+        }
+
+        .pass-footer {
+            background: var(--primary-light);
+            border-top: 1px dashed var(--primary-border);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+        }
+
+        /* BADGES */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 14px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .badge-paid { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .badge-pending { background: #fef3c7; color: #b45309; border: 1px solid #fef08a; }
+        .badge-active { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .badge-open { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .badge-resolved { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+
+        /* BOOKINGS CARD GRID */
+        .booking-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 16px;
+        }
+
+        .booking-item-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        .booking-item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-border);
+        }
+
+        /* TOAST */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 14px 20px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid var(--accent-cyan);
+            animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PASSENGER LOGIN OVERLAY -->
+    <div id="login-view">
+        <div class="login-card">
+            <div class="login-brand">
+                <div class="brand-icon">IT</div>
+                <div>
+                    <div class="login-title">IntelliTransit</div>
+                    <div class="login-subtitle">Passenger Portal Sign In</div>
+                </div>
+            </div>
+            <div id="login-error" class="login-error"></div>
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Username or Email</label>
+                    <input type="text" id="username" class="form-input" value="demopassenger1" placeholder="demopassenger1" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" class="form-input" value="password123" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Sign In to Passenger Portal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a class="nav-brand" onclick="switchTab('home')">
+            <div class="brand-icon" style="width:34px;height:34px;font-size:16px;">IT</div>
+            <div>Intelli<span>Transit</span> <span class="live-dot"></span></div>
+        </a>
+        <div class="nav-links">
+            <a class="nav-link active" id="nav-home" onclick="switchTab('home')">Home</a>
+            <a class="nav-link" id="nav-plan" onclick="switchTab('plan')">Plan Journey</a>
+            <a class="nav-link" id="nav-bookings" onclick="switchTab('bookings')">My Bookings</a>
+            <a class="nav-link" id="nav-tickets" onclick="switchTab('tickets')">My Tickets & QR</a>
+            <a class="nav-link" id="nav-complaints" onclick="switchTab('complaints')">Complaints</a>
+            <a class="nav-link" id="nav-profile" onclick="switchTab('profile')">Profile</a>
+            <a class="nav-link" onclick="handleLogout()" style="color:#ef4444;">Logout</a>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <main class="container">
+
+        <!-- 1. HOME TAB -->
+        <div class="tab-content active" id="tab-home">
+            <div class="hero-banner">
+                <h1 id="welcome-heading">Welcome to IntelliTransit</h1>
+                <p>Plan smarter. Travel better. Calculate distance-based fares, reserve trip seats, view instant digital QR passes, and file transit feedback seamlessly.</p>
+                <div class="hero-tags">
+                    <span class="hero-tag"><span style="color:#10b981;">●</span> 50 Active Routes</span>
+                    <span class="hero-tag"><span style="color:#06b6d4;">●</span> Distance Fare Engine</span>
+                    <span class="hero-tag"><span style="color:#3b82f6;">●</span> Instant QR Pass</span>
+                </div>
+                <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;">
+                    <button class="btn btn-primary" style="background:#ffffff;color:var(--secondary);" onclick="switchTab('plan')">Plan Journey & Book Ticket →</button>
+                    <button class="btn btn-secondary" style="background:rgba(255,255,255,0.15);color:white;border-color:rgba(255,255,255,0.3);" onclick="switchTab('tickets')">View Digital QR Pass</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Quick Actions & Services</div>
+                <div class="quick-actions-grid">
+                    <div class="action-card" onclick="switchTab('plan')">
+                        <div>
+                            <div class="action-icon-badge">01</div>
+                            <div class="action-card-title">Plan Journey</div>
+                            <div class="action-card-sub">Select route, stops, and compute fare distance</div>
+                        </div>
+                        <div style="margin-top:16px;font-weight:700;color:var(--primary);font-size:12px;">Start Flow →</div>
+                    </div>
+
+                    <div class="action-card" onclick="switchTab('plan')">
+                        <div>
+                            <div class="action-icon-badge" style="background:#f0fdf4;color:#16a34a;">02</div>
+                            <div class="action-card-title">Book Ticket</div>
+                            <div class="action-card-sub">Reserve scheduled trip seat with instant confirmation</div>
+                        </div>
+                        <div style="margin-top:16px;font-weight:700;color:#16a34a;font-size:12px;">Book Seat →</div>
+                    </div>
+
+                    <div class="action-card" onclick="switchTab('tickets')">
+                        <div>
+                            <div class="action-icon-badge" style="background:#fefce8;color:#ca8a04;">03</div>
+                            <div class="action-card-title">Digital QR Ticket</div>
+                            <div class="action-card-sub">Show active QR pass for bus boarding validation</div>
+                        </div>
+                        <div style="margin-top:16px;font-weight:700;color:#ca8a04;font-size:12px;">Show Pass →</div>
+                    </div>
+
+                    <div class="action-card" onclick="switchTab('bookings')">
+                        <div>
+                            <div class="action-icon-badge" style="background:#faf5ff;color:#9333ea;">04</div>
+                            <div class="action-card-title">My Bookings</div>
+                            <div class="action-card-sub">Review reservation history & transaction details</div>
+                        </div>
+                        <div style="margin-top:16px;font-weight:700;color:#9333ea;font-size:12px;">History →</div>
+                    </div>
+
+                    <div class="action-card" onclick="switchTab('complaints')">
+                        <div>
+                            <div class="action-icon-badge" style="background:#fff1f2;color:#e11d48;">05</div>
+                            <div class="action-card-title">Complaints</div>
+                            <div class="action-card-sub">Submit feedback on service delays or bus condition</div>
+                        </div>
+                        <div style="margin-top:16px;font-weight:700;color:#e11d48;font-size:12px;">Submit →</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. PLAN JOURNEY & FARE CALCULATOR -->
+        <div class="tab-content" id="tab-plan">
+            <div class="card">
+                <div class="card-title">Plan Journey & Calculate Fare</div>
+
+                <!-- Step-by-Step Flow Bar -->
+                <div class="journey-flow-steps">
+                    <div class="flow-step active">
+                        <div class="flow-step-num">1</div>
+                        <div>SELECT ROUTE</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step active">
+                        <div class="flow-step-num">2</div>
+                        <div>SELECT STOPS</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step active">
+                        <div class="flow-step-num">3</div>
+                        <div>CALCULATE FARE</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="flow-step-num">4</div>
+                        <div>SELECT TRIP</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="flow-step-num">5</div>
+                        <div>BOOK TICKET</div>
+                    </div>
+                </div>
+
+                <form id="fare-form" onsubmit="calculateFare(event)">
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;">
+                        <div class="form-group">
+                            <label class="form-label">Step 1 — Select Route</label>
+                            <select id="plan-route" class="form-select" required onchange="onRouteChanged()"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Step 2 — Origin Stop</label>
+                            <select id="plan-origin" class="form-select" required onchange="onOriginChanged()"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Step 2 — Destination Stop</label>
+                            <select id="plan-destination" class="form-select" required onchange="onStopsOrCategoryChanged()"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Passenger Category</label>
+                            <select id="plan-category" class="form-select" onchange="onStopsOrCategoryChanged()">
+                                <option value="STANDARD">Standard Passenger</option>
+                                <option value="STUDENT">Student Concession (-20%)</option>
+                                <option value="SENIOR">Senior Citizen Concession (-30%)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top:12px;padding:12px 24px;">Calculate Distance & Fare</button>
+                </form>
+
+                <!-- Calculated Fare Focal Point -->
+                <div id="fare-result-box" class="fare-result-card">
+                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                        <div>
+                            <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Calculated Final Fare</div>
+                            <div class="fare-amount-large" id="res-fare-amount">₹30.00</div>
+                        </div>
+                        <span class="badge badge-active" style="padding:6px 14px;font-size:12px;">Distance Matrix Verified</span>
+                    </div>
+
+                    <div class="fare-details-grid">
+                        <div class="fare-detail-item">
+                            <div class="fare-detail-label">Distance</div>
+                            <div class="fare-detail-val" id="res-dist">1.50 km</div>
+                        </div>
+                        <div class="fare-detail-item">
+                            <div class="fare-detail-label">Origin Stop</div>
+                            <div class="fare-detail-val" id="res-orig">Chennai Stop 4</div>
+                        </div>
+                        <div class="fare-detail-item">
+                            <div class="fare-detail-label">Destination Stop</div>
+                            <div class="fare-detail-val" id="res-dest">Chennai Stop 5</div>
+                        </div>
+                        <div class="fare-detail-item">
+                            <div class="fare-detail-label">Rule Base Fare</div>
+                            <div class="fare-detail-val" id="res-base">₹30.00</div>
+                        </div>
+                    </div>
+
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:12px;" id="res-fare-details">Distance: 1.50 km | Origin: Chennai Stop 4 | Dest: Chennai Stop 5</div>
+                    
+                    <!-- Trip Schedule & Booking Action -->
+                    <div style="margin-top:20px;border-top:1px solid var(--primary-border);padding-top:20px;">
+                        <div style="font-weight:800;font-size:15px;color:var(--text-main);margin-bottom:12px;">Step 4 & 5 — Select Active Trip Schedule & Reserve</div>
+                        <div class="form-group">
+                            <label class="form-label">Available Scheduled Trip</label>
+                            <select id="plan-trip" class="form-select"></select>
+                        </div>
+                        <button class="btn btn-primary" id="btn-book-ticket" onclick="executeBooking()" style="padding:14px 28px;font-size:15px;width:100%;margin-top:8px;" disabled>Book Ticket & Generate Pass Now →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. MY BOOKINGS -->
+        <div class="tab-content" id="tab-bookings">
+            <div class="card">
+                <div class="card-title">My Bookings History</div>
+                <div id="bookings-list-container">
+                    <div style="color:var(--text-muted);padding:20px;text-align:center;">Loading booking history...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. MY TICKETS & QR CODE -->
+        <div class="tab-content" id="tab-tickets">
+            <div class="card">
+                <div class="card-title">Digital Transit Passes & QR Code</div>
+                <div id="tickets-container">
+                    <div style="color:var(--text-muted);padding:20px;text-align:center;">Loading active digital passes...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. COMPLAINTS -->
+        <div class="tab-content" id="tab-complaints">
+            <div class="card">
+                <div class="card-title">Submit Feedback / Complaint</div>
+                <form id="complaint-form" onsubmit="submitComplaint(event)">
+                    <div class="form-group">
+                        <label class="form-label">Issue Category</label>
+                        <select id="comp-category" class="form-select" required>
+                            <option value="SERVICE_DELAY">Service Delay</option>
+                            <option value="BUS_CONDITION">Bus Condition</option>
+                            <option value="DRIVER_BEHAVIOR">Driver Behavior</option>
+                            <option value="FARE_DISCREPANCY">Fare Discrepancy</option>
+                            <option value="OTHER">Other Issue</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Subject Title</label>
+                        <input type="text" id="comp-subject" class="form-input" placeholder="e.g. Bus delayed by 25 mins on DEMO-R4" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Detailed Description</label>
+                        <textarea id="comp-description" class="form-input" rows="3" placeholder="Provide clear operational details regarding the issue..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Complaint to Operations</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-title">My Filed Complaints</div>
+                <div id="complaints-list-container">
+                    <div style="color:var(--text-muted);padding:20px;text-align:center;">Loading complaint history...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. PROFILE -->
+        <div class="tab-content" id="tab-profile">
+            <div class="card">
+                <div class="card-title">Passenger Profile & Authentication Details</div>
+                <div style="display:flex;flex-direction:column;gap:14px;font-size:14px;">
+                    <div style="padding:12px;background:var(--bg-body);border-radius:8px;border:1px solid var(--border-color);">
+                        <strong>Account Role:</strong> PASSENGER
+                    </div>
+                    <div style="padding:12px;background:var(--bg-body);border-radius:8px;border:1px solid var(--border-color);">
+                        <strong>Default Account:</strong> demopassenger1
+                    </div>
+                    <div style="padding:12px;background:var(--bg-body);border-radius:8px;border:1px solid var(--border-color);">
+                        <strong>Authentication Token Status:</strong> <span class="badge badge-paid">ACTIVE (JWT Verified)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8081';
+        let rawStops = [];
+        let rawRoutes = [];
+        let rawTrips = [];
+        let currentCalculatedFare = null;
+        let lastToastMsg = '';
+        let lastToastTime = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('passengerJwtToken');
+            if (!token) {
+                document.getElementById('login-view').style.display = 'flex';
+            } else {
+                document.getElementById('login-view').style.display = 'none';
+                switchTab('home');
+                loadInitialData();
+            }
+        });
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const usernameOrEmail = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorDiv = document.getElementById('login-error');
+
+            errorDiv.style.display = 'none';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usernameOrEmail, password })
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Invalid credentials');
+
+                const token = data.accessToken || data.token;
+                if (!token) throw new Error('No access token returned');
+
+                localStorage.setItem('passengerJwtToken', token);
+                document.getElementById('login-view').style.display = 'none';
+                showToast('Signed in successfully as Passenger');
+                loadInitialData();
+            } catch (err) {
+                errorDiv.textContent = err.message || 'Login failed';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('passengerJwtToken');
+            document.getElementById('login-view').style.display = 'flex';
+            showToast('Signed out');
+        }
+
+        function getAuthHeaders() {
+            const token = localStorage.getItem('passengerJwtToken');
+            return {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+
+            const targetTab = document.getElementById(`tab-${tabId}`);
+            const targetNav = document.getElementById(`nav-${tabId}`);
+
+            if (targetTab) targetTab.classList.add('active');
+            if (targetNav) targetNav.classList.add('active');
+
+            if (tabId === 'bookings') fetchMyBookings();
+            if (tabId === 'tickets') fetchMyTickets();
+            if (tabId === 'complaints') fetchMyComplaints();
+        }
+
+        async function loadInitialData() {
+            try {
+                const [resStops, resRoutes, resTrips] = await Promise.all([
+                    fetch(`${API_BASE}/api/stops`, { headers: getAuthHeaders() }),
+                    fetch(`${API_BASE}/api/routes`, { headers: getAuthHeaders() }),
+                    fetch(`${API_BASE}/api/passenger/trips`, { headers: getAuthHeaders() })
+                ]);
+
+                if (resStops.ok) {
+                    const stopsData = await resStops.json();
+                    rawStops = Array.isArray(stopsData) ? stopsData : (stopsData.content || stopsData.data || []);
+                }
+
+                if (resRoutes.ok) {
+                    const routesData = await resRoutes.json();
+                    rawRoutes = Array.isArray(routesData) ? routesData : (routesData.content || routesData.data || []);
+                    populateRoutesDropdown();
+                }
+
+                if (resTrips.ok) {
+                    const tripsData = await resTrips.json();
+                    rawTrips = Array.isArray(tripsData) ? tripsData : (tripsData.content || tripsData.data || []);
+                    onRouteChanged();
+                }
+            } catch (err) {
+                console.error('Error loading initial passenger data:', err);
+            }
+        }
+
+        function populateRoutesDropdown() {
+            const routeSelect = document.getElementById('plan-route');
+            if (!routeSelect || !rawRoutes) return;
+
+            routeSelect.innerHTML = rawRoutes.map(r => `
+                <option value="${r.id}">${r.routeNumber} — ${r.routeName}</option>
+            `).join('');
+        }
+
+        function extractRouteStops(selectedRoute) {
+            if (!selectedRoute) return [];
+
+            // STRICT: Use only the explicit RouteStopDTO array returned in selectedRoute.stops
+            const routeStops = selectedRoute.stops || selectedRoute.routeStops || selectedRoute.routeStopDTOs || [];
+            if (routeStops && routeStops.length > 0) {
+                return routeStops.map(rs => ({
+                    stopId: rs.stopId || (rs.stop ? rs.stop.id : rs.id),
+                    stopName: rs.stopName || (rs.stop ? rs.stop.name : `Stop #${rs.stopId || rs.id}`),
+                    stopSequence: rs.stopSequence || 1
+                }));
+            }
+
+            return [];
+        }
+
+        function onRouteChanged() {
+            resetFareState();
+
+            const routeSelect = document.getElementById('plan-route');
+            if (!routeSelect || !rawRoutes || rawRoutes.length === 0) return;
+
+            const selectedRouteId = Number(routeSelect.value);
+            const selectedRoute = rawRoutes.find(r => r.id === selectedRouteId);
+
+            const originSelect = document.getElementById('plan-origin');
+            const destSelect = document.getElementById('plan-destination');
+
+            const stopsOnRoute = extractRouteStops(selectedRoute);
+
+            if (stopsOnRoute && stopsOnRoute.length > 0) {
+                originSelect.innerHTML = stopsOnRoute.map(rs => `
+                    <option value="${rs.stopId}" data-seq="${rs.stopSequence}">${rs.stopName} (Stop #${rs.stopId})</option>
+                `).join('');
+
+                onOriginChanged();
+            } else {
+                originSelect.innerHTML = `<option value="">No stops mapped for this route</option>`;
+                destSelect.innerHTML = `<option value="">No stops mapped for this route</option>`;
+            }
+
+            // Filter trips for selected route
+            const tripSelect = document.getElementById('plan-trip');
+            if (tripSelect && rawTrips) {
+                const matchingTrips = rawTrips.filter(t => t.routeId === selectedRouteId);
+                const tripsToDisplay = matchingTrips.length > 0 ? matchingTrips : [];
+
+                if (tripsToDisplay && tripsToDisplay.length > 0) {
+                    tripSelect.innerHTML = tripsToDisplay.map(t => `
+                        <option value="${t.id}">Trip #${t.id} (${t.gtfsTripId || 'SCHEDULED'}) — ${t.status}</option>
+                    `).join('');
+                } else {
+                    tripSelect.innerHTML = `<option value="">No trip schedules available for this route</option>`;
+                }
+            }
+        }
+
+        function onOriginChanged() {
+            resetFareState();
+
+            const routeSelect = document.getElementById('plan-route');
+            if (!routeSelect || !rawRoutes) return;
+
+            const selectedRouteId = Number(routeSelect.value);
+            const selectedRoute = rawRoutes.find(r => r.id === selectedRouteId);
+
+            const originSelect = document.getElementById('plan-origin');
+            const destSelect = document.getElementById('plan-destination');
+
+            const stopsOnRoute = extractRouteStops(selectedRoute);
+
+            if (stopsOnRoute && stopsOnRoute.length > 0) {
+                const originOption = originSelect.options[originSelect.selectedIndex];
+                const originSeq = originOption ? Number(originOption.getAttribute('data-seq') || 0) : 0;
+
+                const destStops = stopsOnRoute.filter(rs => rs.stopSequence > originSeq);
+                const stopsToRender = destStops.length > 0 ? destStops : stopsOnRoute;
+
+                destSelect.innerHTML = stopsToRender.map(rs => `
+                    <option value="${rs.stopId}" data-seq="${rs.stopSequence}">${rs.stopName} (Stop #${rs.stopId})</option>
+                `).join('');
+            } else {
+                destSelect.innerHTML = `<option value="">No stops mapped for this route</option>`;
+            }
+        }
+
+        function onStopsOrCategoryChanged() {
+            resetFareState();
+        }
+
+        function resetFareState() {
+            currentCalculatedFare = null;
+            const fareBox = document.getElementById('fare-result-box');
+            if (fareBox) fareBox.style.display = 'none';
+
+            const bookBtn = document.getElementById('btn-book-ticket');
+            if (bookBtn) bookBtn.disabled = true;
+        }
+
+        async function calculateFare(e) {
+            e.preventDefault();
+            resetFareState();
+
+            const routeSelect = document.getElementById('plan-route');
+            const originSelect = document.getElementById('plan-origin');
+            const destSelect = document.getElementById('plan-destination');
+
+            const routeId = Number(routeSelect.value);
+            const originStopId = Number(originSelect.value);
+            const destinationStopId = Number(destSelect.value);
+            const passengerCategory = document.getElementById('plan-category').value;
+
+            if (!routeId || !originStopId || !destinationStopId) {
+                showToast('Please select a valid route with mapped stops');
+                return;
+            }
+
+            if (originStopId === destinationStopId) {
+                showToast('Origin and Destination stops cannot be the same');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/fares/calculate`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ routeId, originStopId, destinationStopId, passengerCategory })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.message || 'Fare calculation failed for selected stops');
+                }
+
+                currentCalculatedFare = data;
+                document.getElementById('res-fare-amount').textContent = `₹${data.finalFare ? Number(data.finalFare).toFixed(2) : '0.00'}`;
+                document.getElementById('res-fare-details').textContent = `Distance: ${data.distanceKm || '—'} km | Origin: ${data.originStopName || 'Origin'} | Dest: ${data.destinationStopName || 'Destination'}`;
+                
+                const elDist = document.getElementById('res-dist');
+                if (elDist) elDist.textContent = `${data.distanceKm || '—'} km`;
+                const elOrig = document.getElementById('res-orig');
+                if (elOrig) elOrig.textContent = data.originStopName || 'Origin';
+                const elDest = document.getElementById('res-dest');
+                if (elDest) elDest.textContent = data.destinationStopName || 'Destination';
+                const elBase = document.getElementById('res-base');
+                if (elBase) elBase.textContent = `₹${data.baseFare ? Number(data.baseFare).toFixed(2) : '30.00'}`;
+
+                document.getElementById('fare-result-box').style.display = 'block';
+
+                const tripSelect = document.getElementById('plan-trip');
+                if (tripSelect && tripSelect.value) {
+                    document.getElementById('btn-book-ticket').disabled = false;
+                }
+            } catch (err) {
+                console.error('Fare calculation error:', err);
+                showToast(err.message || 'Fare calculation unavailable. Please check your route and stops.');
+            }
+        }
+
+        async function executeBooking() {
+            if (!currentCalculatedFare) {
+                showToast('Please calculate fare before booking');
+                return;
+            }
+
+            const tripId = Number(document.getElementById('plan-trip').value);
+            const originStopId = Number(document.getElementById('plan-origin').value);
+            const destinationStopId = Number(document.getElementById('plan-destination').value);
+            const passengerCategory = document.getElementById('plan-category').value;
+
+            if (!tripId) {
+                showToast('Please select a valid trip schedule');
+                return;
+            }
+
+            const bookBtn = document.getElementById('btn-book-ticket');
+            bookBtn.disabled = true;
+            bookBtn.textContent = 'Processing Reservation & Generating Pass...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/passenger/bookings`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ tripId, originStopId, destinationStopId, passengerCategory })
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Booking could not be completed. Please try again.');
+
+                showToast(`🎉 Ticket booked successfully! Ref: ${data.bookingReference}`);
+                switchTab('tickets');
+            } catch (err) {
+                console.error('Booking error:', err);
+                showToast(err.message || 'Booking could not be completed. Please try again.');
+            } finally {
+                bookBtn.disabled = false;
+                bookBtn.textContent = 'Book Ticket & Generate Pass Now →';
+            }
+        }
+
+        async function fetchMyBookings() {
+            const container = document.getElementById('bookings-list-container');
+            try {
+                const res = await fetch(`${API_BASE}/api/passenger/bookings/my`, { headers: getAuthHeaders() });
+                if (!res.ok) throw new Error('Failed to load bookings');
+                const rawData = await res.json();
+                const bookings = Array.isArray(rawData) ? rawData : (rawData.content || rawData.data || []);
+
+                if (!bookings || bookings.length === 0) {
+                    container.innerHTML = `<div style="padding:20px;color:var(--text-muted);text-align:center;">No active passenger bookings found.</div>`;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="booking-cards-grid">
+                        ${bookings.map(b => `
+                            <div class="booking-item-card">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                                    <span style="font-family:monospace;font-weight:800;color:var(--primary);">${b.bookingReference || '#' + b.bookingId}</span>
+                                    <span class="badge badge-active">${b.bookingStatus || 'CONFIRMED'}</span>
+                                </div>
+                                <div style="font-weight:700;font-size:15px;margin-bottom:6px;">${b.routeNumber || '—'} — ${b.routeName || 'Route'}</div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:10px;border-top:1px solid var(--border-light);">
+                                    <span style="font-weight:800;font-size:16px;color:var(--text-main);">₹${b.fareAmount ? Number(b.fareAmount).toFixed(2) : '0.00'}</span>
+                                    <span class="badge badge-paid">${b.paymentStatus || 'PAID'}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<div style="padding:20px;color:#ef4444;">Failed to load bookings.</div>`;
+            }
+        }
+
+        async function fetchMyTickets() {
+            const container = document.getElementById('tickets-container');
+            try {
+                const res = await fetch(`${API_BASE}/api/passenger/bookings/my`, { headers: getAuthHeaders() });
+                if (!res.ok) throw new Error('Failed to load tickets');
+                const rawData = await res.json();
+                const bookings = Array.isArray(rawData) ? rawData : (rawData.content || rawData.data || []);
+
+                const ticketBookings = bookings.filter(b => b.ticket && b.ticket.id);
+                if (ticketBookings.length === 0) {
+                    container.innerHTML = `<div style="padding:20px;color:var(--text-muted);text-align:center;">No digital QR tickets found. Book a trip to obtain a digital pass.</div>`;
+                    return;
+                }
+
+                container.innerHTML = ticketBookings.map(b => `
+                    <div class="transit-pass-card">
+                        <div class="pass-header">
+                            <div>
+                                <div class="pass-route-name">${b.routeNumber || 'R-PASS'} — ${b.routeName || 'Digital Pass'}</div>
+                                <div style="font-size:11px;color:#bae6fd;">VALID TRANSIT PASS</div>
+                            </div>
+                            <div class="pass-ref">${b.bookingReference}</div>
+                        </div>
+                        <div class="pass-body">
+                            <div class="qr-wrapper">
+                                <img class="qr-img" src="${API_BASE}/api/tickets/${b.ticket.id}/qr-image?size=220" alt="Ticket QR Code">
+                            </div>
+                            <div style="font-weight:800;font-size:15px;margin-bottom:6px;color:var(--text-main);">Ticket #${b.ticket.ticketNumber || 'TK-PASS'}</div>
+                            <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Present QR to Bus Driver / Validator upon boarding</div>
+                            <div><span class="badge badge-active">${b.ticket.status || 'ACTIVE'}</span></div>
+                        </div>
+                        <div class="pass-footer">
+                            <span>Status: Verified Active</span>
+                            <span>Fare Paid: ₹${b.fareAmount ? Number(b.fareAmount).toFixed(2) : '0.00'}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<div style="padding:20px;color:#ef4444;">Failed to load tickets.</div>`;
+            }
+        }
+
+        async function submitComplaint(e) {
+            e.preventDefault();
+            const category = document.getElementById('comp-category').value;
+            const subject = document.getElementById('comp-subject').value.trim();
+            const description = document.getElementById('comp-description').value.trim();
+
+            try {
+                const res = await fetch(`${API_BASE}/api/passenger/complaints`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ category, subject, description })
+                });
+
+                if (!res.ok) throw new Error('Failed to submit complaint');
+                showToast('Complaint submitted successfully!');
+                document.getElementById('complaint-form').reset();
+                fetchMyComplaints();
+            } catch (err) {
+                console.error(err);
+                showToast(err.message || 'Error submitting complaint');
+            }
+        }
+
+        async function fetchMyComplaints() {
+            const container = document.getElementById('complaints-list-container');
+            try {
+                const res = await fetch(`${API_BASE}/api/passenger/complaints/my`, { headers: getAuthHeaders() });
+                if (!res.ok) throw new Error('Failed to load complaints');
+                const rawData = await res.json();
+                const complaints = Array.isArray(rawData) ? rawData : (rawData.content || rawData.data || []);
+
+                if (!complaints || complaints.length === 0) {
+                    container.innerHTML = `<div style="padding:20px;color:var(--text-muted);text-align:center;">No complaints filed.</div>`;
+                    return;
+                }
+
+                container.innerHTML = complaints.map(c => `
+                    <div style="padding:16px;border-bottom:1px solid var(--border-light);display:flex;flex-direction:column;gap:6px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-weight:700;font-size:14px;color:var(--text-main);">${c.subject}</span>
+                            <span class="badge ${c.status === 'RESOLVED' ? 'badge-resolved' : 'badge-open'}">${c.status || 'OPEN'}</span>
+                        </div>
+                        <div style="font-size:12px;color:var(--text-muted);">${c.description}</div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<div style="padding:20px;color:#ef4444;">Failed to load complaints.</div>`;
+            }
+        }
+
+        function showToast(msg) {
+            const now = Date.now();
+            if (msg === lastToastMsg && (now - lastToastTime) < 2000) return;
+            lastToastMsg = msg;
+            lastToastTime = now;
+
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<span style="color:var(--accent-cyan);">●</span> ${msg}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+        }
+    </script>
+</body>
+</html>

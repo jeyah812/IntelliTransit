@@ -1,6 +1,6 @@
 package com.intellitransit.controller;
 
-import com.intellitransit.entity.AIAlert;
+import com.intellitransit.dto.AIAlertDTO;
 import com.intellitransit.entity.enums.AlertSeverity;
 import com.intellitransit.entity.enums.AlertStatus;
 import com.intellitransit.entity.enums.AlertType;
@@ -46,7 +46,7 @@ class AIAlertControllerTest {
     @WithMockUser(roles = "OPERATIONS_MANAGER")
     @DisplayName("GET /api/operations/alerts should return all alerts for OPERATIONS_MANAGER")
     void testGetAllAlerts() throws Exception {
-        AIAlert alert1 = AIAlert.builder()
+        AIAlertDTO alert1 = AIAlertDTO.builder()
                 .id(1L)
                 .alertType(AlertType.TRIP_DURATION_ANOMALY)
                 .severity(AlertSeverity.HIGH)
@@ -71,7 +71,7 @@ class AIAlertControllerTest {
     @WithMockUser(roles = "OPERATIONS_MANAGER")
     @DisplayName("GET /api/operations/alerts/new should return new alerts")
     void testGetNewAlerts() throws Exception {
-        AIAlert alert = AIAlert.builder()
+        AIAlertDTO alert = AIAlertDTO.builder()
                 .id(2L)
                 .alertType(AlertType.COMPLAINT_SPIKE)
                 .severity(AlertSeverity.MEDIUM)
@@ -96,7 +96,7 @@ class AIAlertControllerTest {
     @WithMockUser(roles = "OPERATIONS_MANAGER")
     @DisplayName("POST /api/operations/alerts/run should execute anomaly detection and return generated alerts")
     void testRunAnomalyDetection() throws Exception {
-        AIAlert alert = AIAlert.builder()
+        AIAlertDTO alert = AIAlertDTO.builder()
                 .id(3L)
                 .alertType(AlertType.DEMAND_ANOMALY)
                 .severity(AlertSeverity.MEDIUM)

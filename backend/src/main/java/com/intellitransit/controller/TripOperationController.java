@@ -52,6 +52,12 @@ public class TripOperationController {
         return ResponseEntity.ok(trips);
     }
 
+    @GetMapping("/passenger/trips")
+    public ResponseEntity<List<TripDTO>> getPassengerTrips() {
+        List<TripDTO> trips = tripOperationService.getAllTrips();
+        return ResponseEntity.ok(trips);
+    }
+
     @GetMapping("/operations/trips")
     public ResponseEntity<List<TripDTO>> getAllTrips() {
         List<TripDTO> trips = tripOperationService.getAllTrips();

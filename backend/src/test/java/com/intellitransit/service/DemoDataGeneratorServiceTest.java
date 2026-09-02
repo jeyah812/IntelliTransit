@@ -26,6 +26,8 @@ class DemoDataGeneratorServiceTest {
 
     @Mock private RouteRepository routeRepository;
     @Mock private StopRepository stopRepository;
+    @Mock private RouteStopRepository routeStopRepository;
+    @Mock private FareRuleRepository fareRuleRepository;
     @Mock private BusRepository busRepository;
     @Mock private DriverRepository driverRepository;
     @Mock private TripRepository tripRepository;
@@ -53,6 +55,8 @@ class DemoDataGeneratorServiceTest {
 
         when(stopRepository.save(any(Stop.class))).thenAnswer(i -> i.getArgument(0));
         when(routeRepository.save(any(Route.class))).thenAnswer(i -> i.getArgument(0));
+        when(routeStopRepository.save(any(RouteStop.class))).thenAnswer(i -> i.getArgument(0));
+        when(fareRuleRepository.save(any(FareRule.class))).thenAnswer(i -> i.getArgument(0));
         when(tripRepository.save(any(Trip.class))).thenAnswer(i -> i.getArgument(0));
         when(bookingRepository.save(any(Booking.class))).thenAnswer(i -> i.getArgument(0));
         when(complaintRepository.save(any(Complaint.class))).thenAnswer(i -> i.getArgument(0));
@@ -75,6 +79,8 @@ class DemoDataGeneratorServiceTest {
 
         verify(stopRepository, times(100)).save(any(Stop.class));
         verify(routeRepository, times(50)).save(any(Route.class));
+        verify(routeStopRepository, times(250)).save(any(RouteStop.class));
+        verify(fareRuleRepository, times(50)).save(any(FareRule.class));
         verify(tripRepository, times(200)).save(any(Trip.class));
         verify(bookingRepository, times(1000)).save(any(Booking.class));
         verify(complaintRepository, times(100)).save(any(Complaint.class));

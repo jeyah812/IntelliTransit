@@ -1,5 +1,6 @@
 package com.intellitransit.service;
 
+import com.intellitransit.dto.AIAlertDTO;
 import com.intellitransit.entity.*;
 import com.intellitransit.entity.enums.*;
 import com.intellitransit.repository.AIAlertRepository;
@@ -15,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,11 +68,11 @@ class AIAlertServiceTest {
         when(aiAlertRepository.existsByTripIdAndAlertTypeAndStatus(eq(1L), eq(AlertType.TRIP_DURATION_ANOMALY), eq(AlertStatus.NEW))).thenReturn(false);
         when(aiAlertRepository.save(any(AIAlert.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<AIAlert> alerts = aiAlertService.runAnomalyDetection();
+        List<AIAlertDTO> alerts = aiAlertService.runAnomalyDetection();
 
         assertNotNull(alerts);
         assertEquals(1, alerts.size());
-        AIAlert alert = alerts.get(0);
+        AIAlertDTO alert = alerts.get(0);
         assertEquals(AlertType.TRIP_DURATION_ANOMALY, alert.getAlertType());
         assertEquals(AlertSeverity.HIGH, alert.getSeverity());
         assertEquals(AlertStatus.NEW, alert.getStatus());
@@ -96,11 +96,11 @@ class AIAlertServiceTest {
         when(aiAlertRepository.existsByTripIdAndAlertTypeAndStatus(eq(2L), eq(AlertType.COMPLAINT_SPIKE), eq(AlertStatus.NEW))).thenReturn(false);
         when(aiAlertRepository.save(any(AIAlert.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<AIAlert> alerts = aiAlertService.runAnomalyDetection();
+        List<AIAlertDTO> alerts = aiAlertService.runAnomalyDetection();
 
         assertNotNull(alerts);
         assertEquals(1, alerts.size());
-        AIAlert alert = alerts.get(0);
+        AIAlertDTO alert = alerts.get(0);
         assertEquals(AlertType.COMPLAINT_SPIKE, alert.getAlertType());
         assertEquals(AlertSeverity.MEDIUM, alert.getSeverity());
         assertEquals(AlertStatus.NEW, alert.getStatus());
@@ -123,11 +123,11 @@ class AIAlertServiceTest {
         when(aiAlertRepository.existsByTripIdAndAlertTypeAndStatus(eq(3L), eq(AlertType.DEMAND_ANOMALY), eq(AlertStatus.NEW))).thenReturn(false);
         when(aiAlertRepository.save(any(AIAlert.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<AIAlert> alerts = aiAlertService.runAnomalyDetection();
+        List<AIAlertDTO> alerts = aiAlertService.runAnomalyDetection();
 
         assertNotNull(alerts);
         assertEquals(1, alerts.size());
-        AIAlert alert = alerts.get(0);
+        AIAlertDTO alert = alerts.get(0);
         assertEquals(AlertType.DEMAND_ANOMALY, alert.getAlertType());
         assertEquals(AlertSeverity.MEDIUM, alert.getSeverity());
         assertEquals(AlertStatus.NEW, alert.getStatus());
@@ -143,7 +143,7 @@ class AIAlertServiceTest {
         when(bookingRepository.findByTripId(1L)).thenReturn(List.of());
         when(aiAlertRepository.existsByTripIdAndAlertTypeAndStatus(eq(1L), eq(AlertType.TRIP_DURATION_ANOMALY), eq(AlertStatus.NEW))).thenReturn(true);
 
-        List<AIAlert> alerts = aiAlertService.runAnomalyDetection();
+        List<AIAlertDTO> alerts = aiAlertService.runAnomalyDetection();
 
         assertNotNull(alerts);
         assertTrue(alerts.isEmpty());
@@ -159,8 +159,8 @@ class AIAlertServiceTest {
         when(aiAlertRepository.findAll()).thenReturn(List.of(alert1, alert2));
         when(aiAlertRepository.findByStatus(AlertStatus.NEW)).thenReturn(List.of(alert1));
 
-        List<AIAlert> all = aiAlertService.getAllAlerts();
-        List<AIAlert> newAlerts = aiAlertService.getNewAlerts();
+        List<AIAlertDTO> all = aiAlertService.getAllAlerts();
+        List<AIAlertDTO> newAlerts = aiAlertService.getNewAlerts();
 
         assertEquals(2, all.size());
         assertEquals(1, newAlerts.size());

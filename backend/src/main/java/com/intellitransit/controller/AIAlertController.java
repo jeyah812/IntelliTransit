@@ -1,6 +1,6 @@
 package com.intellitransit.controller;
 
-import com.intellitransit.entity.AIAlert;
+import com.intellitransit.dto.AIAlertDTO;
 import com.intellitransit.service.AIAlertService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,20 +21,20 @@ public class AIAlertController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AIAlert>> getAllAlerts() {
-        List<AIAlert> alerts = aiAlertService.getAllAlerts();
+    public ResponseEntity<List<AIAlertDTO>> getAllAlerts() {
+        List<AIAlertDTO> alerts = aiAlertService.getAllAlerts();
         return ResponseEntity.ok(alerts);
     }
 
     @GetMapping("/new")
-    public ResponseEntity<List<AIAlert>> getNewAlerts() {
-        List<AIAlert> alerts = aiAlertService.getNewAlerts();
+    public ResponseEntity<List<AIAlertDTO>> getNewAlerts() {
+        List<AIAlertDTO> alerts = aiAlertService.getNewAlerts();
         return ResponseEntity.ok(alerts);
     }
 
     @PostMapping("/run")
-    public ResponseEntity<List<AIAlert>> runAnomalyDetection() {
-        List<AIAlert> generatedAlerts = aiAlertService.runAnomalyDetection();
+    public ResponseEntity<List<AIAlertDTO>> runAnomalyDetection() {
+        List<AIAlertDTO> generatedAlerts = aiAlertService.runAnomalyDetection();
         return ResponseEntity.ok(generatedAlerts);
     }
 }

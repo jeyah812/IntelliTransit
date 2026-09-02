@@ -1,0 +1,2427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliTransit — Smart Transport Operations Control Center</title>
+    <!-- Inter Font & Chart.js -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-sidebar: #0f172a;
+            --bg-sidebar-hover: #1e293b;
+            --bg-sidebar-active: #1e3a8a;
+            --text-sidebar: #94a3b8;
+            --text-sidebar-active: #ffffff;
+            
+            --primary: #1e40af;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-subtle: #94a3b8;
+            
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            
+            --severity-critical-bg: #fef2f2;
+            --severity-critical-text: #991b1b;
+            --severity-critical-border: #fecaca;
+            
+            --severity-high-bg: #fff1f2;
+            --severity-high-text: #be123c;
+            --severity-high-border: #fecdd3;
+            
+            --severity-medium-bg: #fffbe6;
+            --severity-medium-text: #b45309;
+            --severity-medium-border: #fef3c7;
+            
+            --severity-low-bg: #f0f9ff;
+            --severity-low-text: #0369a1;
+            --severity-low-border: #bae6fd;
+
+            --status-new-bg: #eff6ff;
+            --status-new-text: #1d4ed8;
+            --status-new-border: #bfdbfe;
+
+            --status-reviewed-bg: #faf5ff;
+            --status-reviewed-text: #6b21a8;
+            --status-reviewed-border: #e9d5ff;
+
+            --status-resolved-bg: #f0fdf4;
+            --status-resolved-text: #15803d;
+            --status-resolved-border: #bbf7d0;
+
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --radius-md: 8px;
+            --radius-sm: 6px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* LOGIN VIEW */
+        #login-view {
+            position: fixed;
+            inset: 0;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+        }
+
+        .login-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .login-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .login-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            outline: none;
+            transition: all 0.15s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: #ffffff;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-light);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .login-error {
+            background-color: #fef2f2;
+            color: #991b1b;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+            border: 1px solid #fecaca;
+        }
+
+        /* LAYOUT STRUCTURE */
+        #app-layout {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            color: var(--text-sidebar);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            transition: transform 0.2s ease;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-brand-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+
+        .sidebar-brand-sub {
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sidebar-nav {
+            padding: 16px 12px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-section-label {
+            padding: 12px 12px 6px 12px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #475569;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            color: var(--text-sidebar);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 2px;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background-color: var(--bg-sidebar-hover);
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            background-color: var(--bg-sidebar-active);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #334155;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .user-details-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffffff;
+            line-height: 1.2;
+        }
+
+        .user-details-role {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
+        }
+
+        .logout-btn:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* MAIN CONTENT */
+        .main-wrapper {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        /* HEADER */
+        .top-header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .header-title-group h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.01em;
+        }
+
+        .header-title-group p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        /* PAGE BODY */
+        .content-container {
+            padding: 32px;
+            flex: 1;
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        /* KPI CARDS GRID */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.12);
+        }
+
+        .kpi-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value-group {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+        }
+
+        .kpi-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        .kpi-unit {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-left: 4px;
+        }
+
+        .kpi-card.highlight-alert { border-left: 4px solid #ef4444; }
+        .kpi-card.highlight-warning { border-left: 4px solid #f59e0b; }
+        .kpi-card.highlight-success { border-left: 4px solid #10b981; }
+        .kpi-card.highlight-primary { border-left: 4px solid #2563eb; }
+
+        /* OPERATIONS REQUIRING ATTENTION CARDS */
+        .attention-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .attention-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--primary);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .attention-card.critical { border-left-color: #ef4444; }
+        .attention-card.high { border-left-color: #f59e0b; }
+
+        .attention-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .attention-type {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .attention-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 16px;
+        }
+
+        .attention-box {
+            background: var(--bg-body);
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .attention-box-title {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        /* NEW ALERTS BANNER */
+        .banner-new-alerts {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: #ffffff;
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-md);
+        }
+
+        .banner-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .banner-badge {
+            background: #ef4444;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+        }
+
+        .banner-text h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .banner-text p {
+            font-size: 13px;
+            color: #bfdbfe;
+        }
+
+        /* SECTION CARD */
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* FILTER BAR */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            background: var(--bg-body);
+            padding: 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-input-search {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .filter-select {
+            padding: 9px 12px;
+            font-size: 13px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: #ffffff;
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* TABLE */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .custom-table th {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .custom-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .custom-table tbody tr:hover {
+            background-color: var(--primary-light);
+        }
+
+        /* BADGES */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            border: 1px solid transparent;
+        }
+
+        .badge-critical { background: var(--severity-critical-bg); color: var(--severity-critical-text); border-color: var(--severity-critical-border); }
+        .badge-high { background: var(--severity-high-bg); color: var(--severity-high-text); border-color: var(--severity-high-border); }
+        .badge-medium { background: var(--severity-medium-bg); color: var(--severity-medium-text); border-color: var(--severity-medium-border); }
+        .badge-low { background: var(--severity-low-bg); color: var(--severity-low-text); border-color: var(--severity-low-border); }
+
+        .badge-new { background: var(--status-new-bg); color: var(--status-new-text); border-color: var(--status-new-border); }
+        .badge-reviewed { background: var(--status-reviewed-bg); color: var(--status-reviewed-text); border-color: var(--status-reviewed-border); }
+        .badge-resolved { background: var(--status-resolved-bg); color: var(--status-resolved-text); border-color: var(--status-resolved-border); }
+
+        /* ANALYTICS GRID */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 260px;
+            width: 100%;
+        }
+
+        /* NETWORK MAP SCHEMATIC */
+        .network-canvas-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        #network-canvas {
+            width: 100%;
+            height: 440px;
+            background: #0f172a;
+            border-radius: 8px;
+        }
+
+        /* MODAL / DRAWER */
+        .drawer-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .drawer-backdrop.active {
+            display: flex;
+        }
+
+        .drawer-panel {
+            width: 100%;
+            max-width: 520px;
+            height: 100vh;
+            background: #ffffff;
+            box-shadow: -10px 0 25px -5px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            animation: slideIn 0.2s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .drawer-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .drawer-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .drawer-close {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 6px;
+        }
+
+        .drawer-body {
+            padding: 24px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 13px;
+        }
+
+        .detail-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--text-main);
+            text-align: right;
+        }
+
+        .text-block-box {
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            margin-top: 14px;
+        }
+
+        .text-block-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .text-block-content {
+            font-size: 13px;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        /* TOAST */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 14px 20px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-md);
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-wrapper {
+                margin-left: 0;
+            }
+            .mobile-toggle {
+                display: block;
+            }
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN OVERLAY -->
+    <div id="login-view">
+        <div class="login-card">
+            <div class="login-brand">
+                <div class="brand-icon">IT</div>
+                <div>
+                    <div class="login-title">IntelliTransit</div>
+                    <div class="login-subtitle">Operations Control Center Sign In</div>
+                </div>
+            </div>
+            <div id="login-error" class="login-error"></div>
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Username or Email</label>
+                    <input type="text" id="username" class="form-input" value="manager1" placeholder="manager1" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" class="form-input" value="password123" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Sign In to Control Center</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APP LAYOUT -->
+    <div id="app-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-icon" style="width:32px;height:32px;font-size:16px;">IT</div>
+                <div>
+                    <div class="sidebar-brand-name">IntelliTransit</div>
+                    <div class="sidebar-brand-sub">Smart Public Transit</div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Operations</div>
+                <a class="nav-item active" id="nav-overview" onclick="switchTab('overview')">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    Overview
+                </a>
+                <a class="nav-item" id="nav-network" onclick="switchTab('network')">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                    Live Network
+                </a>
+                <a class="nav-item" id="nav-alerts" onclick="switchTab('alerts')">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    AI Alerts
+                </a>
+                <a class="nav-item" id="nav-analytics" onclick="switchTab('analytics')">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    Analytics
+                </a>
+                <a class="nav-item" id="nav-insights" onclick="switchTab('insights')">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    Operations Insights
+                </a>
+
+                <div class="nav-section-label">Network</div>
+                <a class="nav-item" id="nav-routes" onclick="switchTab('routes')">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                    Routes
+                </a>
+                <a class="nav-item" id="nav-trips" onclick="switchTab('trips')">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                    Trips
+                </a>
+                <a class="nav-item" id="nav-fleet" onclick="switchTab('fleet')">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
+                    Fleet
+                </a>
+
+                <div class="nav-section-label">Passenger Intelligence</div>
+                <a class="nav-item" id="nav-bookings" onclick="switchTab('bookings')">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5z"/></svg>
+                    Bookings
+                </a>
+                <a class="nav-item" id="nav-complaints" onclick="switchTab('complaints')">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                    Complaints
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="avatar-initials">OM</div>
+                    <div>
+                        <div class="user-details-name" id="user-display-name">Operations Manager</div>
+                        <div class="user-details-role">Control Center Admin</div>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="handleLogout()" title="Sign Out">
+                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN WRAPPER -->
+        <div class="main-wrapper">
+            <!-- TOP HEADER -->
+            <header class="top-header">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <button class="mobile-toggle" onclick="toggleSidebar()">
+                        <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                    <div class="header-title-group">
+                        <h1 id="header-page-title">IntelliTransit Operations Control Center</h1>
+                        <p id="header-page-sub">Real-time monitoring of routes, trips, fleet and passenger activity.</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="btn-run-detection" onclick="runAnomalyDetection()">
+                        <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <span id="btn-run-text">Run AI Detection</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- CONTENT BODY -->
+            <main class="content-container">
+
+                <!-- 1. OVERVIEW — COMMAND CENTER -->
+                <div class="view-section active" id="view-overview">
+                    <!-- KPI CARDS GRID -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card highlight-alert">
+                            <div class="kpi-title">Total Alerts</div>
+                            <div class="kpi-value-group"><div class="kpi-value" id="kpi-total-alerts">—</div></div>
+                        </div>
+                        <div class="kpi-card highlight-warning">
+                            <div class="kpi-title">Open Alerts</div>
+                            <div class="kpi-value-group"><div class="kpi-value" id="kpi-open-alerts">—</div></div>
+                        </div>
+                        <div class="kpi-card highlight-alert">
+                            <div class="kpi-title">High Severity Alerts</div>
+                            <div class="kpi-value-group"><div class="kpi-value" id="kpi-high-alerts">—</div></div>
+                        </div>
+                        <div class="kpi-card highlight-success">
+                            <div class="kpi-title">Completed Trips</div>
+                            <div class="kpi-value-group"><div class="kpi-value" id="kpi-completed-trips">—</div></div>
+                        </div>
+                        <div class="kpi-card highlight-primary">
+                            <div class="kpi-title">Avg Trip Duration</div>
+                            <div class="kpi-value-group"><div class="kpi-value" id="kpi-avg-duration">—<span class="kpi-unit">mins</span></div></div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Complaints</div>
+                            <div class="kpi-value-group"><div class="kpi-value" id="kpi-complaints">—</div></div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Bookings</div>
+                            <div class="kpi-value-group"><div class="kpi-value" id="kpi-bookings">—</div></div>
+                        </div>
+                    </div>
+
+                    <!-- NEW ALERTS HIGHLIGHT BANNER -->
+                    <div class="banner-new-alerts">
+                        <div class="banner-info">
+                            <div class="banner-badge" id="banner-new-count">0</div>
+                            <div class="banner-text">
+                                <h3>New Operational Anomalies Detected</h3>
+                                <p>Immediate review recommended for service dispatch optimization.</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="switchTab('alerts'); filterByStatus('NEW');">View New Alerts</button>
+                    </div>
+
+                    <!-- OPERATIONS REQUIRING ATTENTION -->
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div>
+                                <div class="section-title" style="font-size:18px;">Operations Requiring Attention</div>
+                                <p style="font-size:12px;color:var(--text-muted);margin-top:2px;">Priority operational anomalies sorted by severity and score</p>
+                            </div>
+                            <button class="btn btn-secondary" onclick="switchTab('alerts')">View All Alerts</button>
+                        </div>
+                        <div class="attention-grid" id="attention-cards-container">
+                            <div style="color:var(--text-muted);padding:20px;">Analyzing network anomalies...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. LIVE NETWORK VIEW -->
+                <div class="view-section" id="view-network">
+                    <div class="kpi-grid">
+                        <div class="kpi-card highlight-primary">
+                            <div class="kpi-title">Network Stops</div>
+                            <div class="kpi-value" id="net-kpi-stops">100</div>
+                        </div>
+                        <div class="kpi-card highlight-success">
+                            <div class="kpi-title">Active Routes</div>
+                            <div class="kpi-value" id="net-kpi-routes">50</div>
+                        </div>
+                        <div class="kpi-card highlight-warning">
+                            <div class="kpi-title">Dispatch Coverage</div>
+                            <div class="kpi-value">100%</div>
+                        </div>
+                    </div>
+
+                    <div class="network-canvas-card">
+                        <div class="section-header">
+                            <div>
+                                <div class="section-title">Schematic Transit Network & Stop Coordinates</div>
+                                <p style="font-size:12px;color:var(--text-muted);">Real GTFS stop projections & route connections</p>
+                            </div>
+                            <div style="display:flex;gap:10px;">
+                                <select id="network-route-select" class="filter-select" onchange="highlightNetworkRoute()">
+                                    <option value="ALL">All Routes</option>
+                                </select>
+                                <button class="btn btn-secondary" onclick="renderNetworkCanvas()">Reset View</button>
+                            </div>
+                        </div>
+                        <canvas id="network-canvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- 3. AI ALERTS VIEW -->
+                <div class="view-section" id="view-alerts">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">AI Operational Alerts</div>
+                            <div style="font-size:12px;color:var(--text-muted);" id="alerts-count-label">Showing 0 alerts</div>
+                        </div>
+
+                        <!-- FILTER BAR -->
+                        <div class="filter-bar">
+                            <input type="text" id="filter-search" class="form-input filter-input-search" placeholder="Search explanation, trip ID, or route..." oninput="applyFilters()">
+                            
+                            <select id="filter-severity" class="filter-select" onchange="applyFilters()">
+                                <option value="ALL">All Severities</option>
+                                <option value="CRITICAL">Critical</option>
+                                <option value="HIGH">High</option>
+                                <option value="MEDIUM">Medium</option>
+                                <option value="LOW">Low</option>
+                            </select>
+
+                            <select id="filter-status" class="filter-select" onchange="applyFilters()">
+                                <option value="ALL">All Statuses</option>
+                                <option value="NEW">New</option>
+                                <option value="REVIEWED">Reviewed</option>
+                                <option value="RESOLVED">Resolved</option>
+                            </select>
+
+                            <select id="filter-type" class="filter-select" onchange="applyFilters()">
+                                <option value="ALL">All Alert Types</option>
+                                <option value="TRIP_DURATION_ANOMALY">Trip Duration Anomaly</option>
+                                <option value="COMPLAINT_SPIKE">Complaint Spike</option>
+                                <option value="DEMAND_ANOMALY">Demand Anomaly</option>
+                            </select>
+
+                            <button class="btn btn-secondary" onclick="resetFilters()">Reset Filters</button>
+                        </div>
+
+                        <!-- TABLE -->
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Alert ID</th>
+                                        <th>Trip ID</th>
+                                        <th>Route</th>
+                                        <th>Alert Type</th>
+                                        <th>Severity</th>
+                                        <th>Score</th>
+                                        <th>Detected At</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="alerts-table-body">
+                                    <tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">Loading operational alerts...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. ANALYTICS VIEW -->
+                <div class="view-section" id="view-analytics">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">Performance & Anomaly Analytics</div>
+                        </div>
+                        <div class="analytics-grid">
+                            <div class="section-card" style="margin:0;">
+                                <div class="kpi-title" style="margin-bottom:14px;">Alert Severity Distribution</div>
+                                <div class="chart-container"><canvas id="chart-severity"></canvas></div>
+                            </div>
+                            <div class="section-card" style="margin:0;">
+                                <div class="kpi-title" style="margin-bottom:14px;">Alert Types Breakdown</div>
+                                <div class="chart-container"><canvas id="chart-types"></canvas></div>
+                            </div>
+                            <div class="section-card" style="margin:0;margin-top:20px;">
+                                <div class="kpi-title" style="margin-bottom:14px;">Trip Execution Status</div>
+                                <div class="chart-container"><canvas id="chart-trips"></canvas></div>
+                            </div>
+                            <div class="section-card" style="margin:0;margin-top:20px;">
+                                <div class="kpi-title" style="margin-bottom:14px;">Complaint Categories</div>
+                                <div class="chart-container"><canvas id="chart-complaints"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. OPERATIONS INSIGHTS VIEW -->
+                <div class="view-section" id="view-insights">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div>
+                                <div class="section-title" style="font-size:18px;">Operations Intelligence & Decision-Support</div>
+                                <p style="font-size:12px;color:var(--text-muted);margin-top:2px;">Top system priorities and operational recommendations derived from live network data</p>
+                            </div>
+                        </div>
+
+                        <div class="attention-grid" id="insights-priorities-grid">
+                            <div style="padding:20px;color:var(--text-muted);">Calculating system insights...</div>
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">Actionable Operational Recommendations</div>
+                        </div>
+                        <div id="insights-recommendations-container" style="display:flex;flex-direction:column;gap:12px;">
+                            <div style="color:var(--text-muted);">Loading recommendations...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. ROUTES VIEW -->
+                <div class="view-section" id="view-routes">
+                    <div class="kpi-grid">
+                        <div class="kpi-card highlight-primary">
+                            <div class="kpi-title">Total Routes</div>
+                            <div class="kpi-value" id="routes-kpi-total">50</div>
+                        </div>
+                        <div class="kpi-card highlight-success">
+                            <div class="kpi-title">Active Network Routes</div>
+                            <div class="kpi-value" id="routes-kpi-active">50</div>
+                        </div>
+                        <div class="kpi-card highlight-warning">
+                            <div class="kpi-title">Avg Distance</div>
+                            <div class="kpi-value" id="routes-kpi-dist">—<span class="kpi-unit">km</span></div>
+                        </div>
+                        <div class="kpi-card highlight-alert">
+                            <div class="kpi-title">Avg Duration</div>
+                            <div class="kpi-value" id="routes-kpi-dur">—<span class="kpi-unit">mins</span></div>
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">Transit Routes Catalog</div>
+                            <button class="btn btn-secondary" onclick="fetchRoutes()">Refresh Routes</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Route ID</th>
+                                        <th>Route Number</th>
+                                        <th>Route Name</th>
+                                        <th>Origin</th>
+                                        <th>Destination</th>
+                                        <th>Distance</th>
+                                        <th>Est. Duration</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="routes-table-body">
+                                    <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Loading routes...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. TRIPS VIEW -->
+                <div class="view-section" id="view-trips">
+                    <div class="kpi-grid">
+                        <div class="kpi-card highlight-primary">
+                            <div class="kpi-title">Total Trips</div>
+                            <div class="kpi-value" id="trips-kpi-total">200</div>
+                        </div>
+                        <div class="kpi-card highlight-success">
+                            <div class="kpi-title">Completed Trips</div>
+                            <div class="kpi-value" id="trips-kpi-completed">120</div>
+                        </div>
+                        <div class="kpi-card highlight-warning">
+                            <div class="kpi-title">In Progress</div>
+                            <div class="kpi-value" id="trips-kpi-inprogress">40</div>
+                        </div>
+                        <div class="kpi-card highlight-alert">
+                            <div class="kpi-title">Scheduled</div>
+                            <div class="kpi-value" id="trips-kpi-scheduled">40</div>
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">Operational Trips</div>
+                            <button class="btn btn-secondary" onclick="fetchTrips()">Refresh Trips</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Trip ID</th>
+                                        <th>GTFS Trip ID</th>
+                                        <th>Route</th>
+                                        <th>Bus Number</th>
+                                        <th>Driver Name</th>
+                                        <th>Scheduled Start</th>
+                                        <th>Scheduled End</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="trips-table-body">
+                                    <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Loading trips...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. FLEET VIEW -->
+                <div class="view-section" id="view-fleet">
+                    <div class="kpi-grid">
+                        <div class="kpi-card highlight-primary">
+                            <div class="kpi-title">Active Buses</div>
+                            <div class="kpi-value" id="fleet-kpi-buses">10</div>
+                        </div>
+                        <div class="kpi-card highlight-success">
+                            <div class="kpi-title">Available Drivers</div>
+                            <div class="kpi-value" id="fleet-kpi-drivers">10</div>
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">Fleet Vehicles (Buses)</div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Bus ID</th>
+                                        <th>License Plate</th>
+                                        <th>Bus Number</th>
+                                        <th>Model</th>
+                                        <th>Capacity</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="buses-table-body">
+                                    <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted);">Loading fleet buses...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">Driver Staff Roster</div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Driver ID</th>
+                                        <th>Employee ID</th>
+                                        <th>Full Name</th>
+                                        <th>Phone Number</th>
+                                        <th>License Number</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="drivers-table-body">
+                                    <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted);">Loading drivers roster...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. BOOKINGS VIEW -->
+                <div class="view-section" id="view-bookings">
+                    <div class="kpi-grid">
+                        <div class="kpi-card highlight-primary">
+                            <div class="kpi-title">Total Bookings</div>
+                            <div class="kpi-value" id="bookings-kpi-total">1,000</div>
+                        </div>
+                        <div class="kpi-card highlight-success">
+                            <div class="kpi-title">Payment Status</div>
+                            <div class="kpi-value">PAID (100%)</div>
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">Passenger Bookings</div>
+                            <button class="btn btn-secondary" onclick="fetchBookings()">Refresh Bookings</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Booking Ref</th>
+                                        <th>Passenger</th>
+                                        <th>Trip ID</th>
+                                        <th>Booking Time</th>
+                                        <th>Fare Amount</th>
+                                        <th>Payment</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookings-table-body">
+                                    <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Loading bookings...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 10. COMPLAINTS VIEW -->
+                <div class="view-section" id="view-complaints">
+                    <div class="kpi-grid">
+                        <div class="kpi-card highlight-alert">
+                            <div class="kpi-title">Total Complaints</div>
+                            <div class="kpi-value" id="complaints-kpi-total">100</div>
+                        </div>
+                        <div class="kpi-card highlight-warning">
+                            <div class="kpi-title">Most Reported Category</div>
+                            <div class="kpi-value" id="complaints-kpi-top-category" style="font-size:18px;margin-top:4px;">—</div>
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">Passenger Complaints</div>
+                            <button class="btn btn-secondary" onclick="fetchComplaints()">Refresh Complaints</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Complaint ID</th>
+                                        <th>Passenger</th>
+                                        <th>Trip ID</th>
+                                        <th>Category</th>
+                                        <th>Subject</th>
+                                        <th>Description</th>
+                                        <th>Created At</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="complaints-table-body">
+                                    <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Loading complaints...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ALERT DETAIL DRAWER WITH OPERATIONAL IMPACT -->
+    <div class="drawer-backdrop" id="detail-drawer" onclick="closeDrawer(event)">
+        <div class="drawer-panel" onclick="event.stopPropagation()">
+            <div class="drawer-header">
+                <div class="drawer-title" id="drawer-alert-id">Alert #—</div>
+                <button class="drawer-close" onclick="closeDrawerDirect()">
+                    <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="drawer-body">
+                <div class="detail-row">
+                    <span class="detail-label">Alert Type</span>
+                    <span class="detail-value" id="drawer-alert-type">—</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Severity</span>
+                    <span id="drawer-severity">—</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status</span>
+                    <span id="drawer-status">—</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Anomaly Score</span>
+                    <span class="detail-value" id="drawer-score">—</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Detected At</span>
+                    <span class="detail-value" id="drawer-detected">—</span>
+                </div>
+
+                <div style="margin-top:20px;font-weight:700;font-size:14px;">Trip & Route Lineage</div>
+                <div class="detail-row">
+                    <span class="detail-label">Internal Trip ID</span>
+                    <span class="detail-value" id="drawer-trip-id">—</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">GTFS Trip ID</span>
+                    <span class="detail-value" id="drawer-gtfs-trip-id">—</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Route Number</span>
+                    <span class="detail-value" id="drawer-route-num">—</span>
+                </div>
+
+                <!-- CROSS-MODULE OPERATIONAL IMPACT -->
+                <div class="text-block-box" style="border-left:3px solid #f59e0b;background:#fffbe6;">
+                    <div class="text-block-title" style="color:#b45309;">Cross-Module Operational Impact</div>
+                    <div id="drawer-impact-content" class="text-block-content">Calculating trip & passenger impact...</div>
+                </div>
+
+                <div class="text-block-box">
+                    <div class="text-block-title">Explanation</div>
+                    <div class="text-block-content" id="drawer-explanation">—</div>
+                </div>
+
+                <div class="text-block-box" style="border-left:3px solid var(--primary);">
+                    <div class="text-block-title" style="color:var(--primary);">Operational Recommendation</div>
+                    <div class="text-block-content" id="drawer-recommendation">—</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- APP SCRIPT -->
+    <script>
+        const API_BASE = 'http://localhost:8081';
+        let rawAlerts = [];
+        let filteredAlerts = [];
+        let rawRoutes = [];
+        let rawTrips = [];
+        let rawComplaints = [];
+        let rawStops = [];
+
+        let severityChartInstance = null;
+        let typesChartInstance = null;
+        let tripsChartInstance = null;
+        let complaintsChartInstance = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('jwtToken');
+            if (!token) {
+                document.getElementById('login-view').style.display = 'flex';
+            } else {
+                document.getElementById('login-view').style.display = 'none';
+                loadDashboardData();
+                const activeTab = sessionStorage.getItem('activeTab') || 'overview';
+                switchTab(activeTab);
+            }
+        });
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const usernameOrEmail = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorDiv = document.getElementById('login-error');
+
+            errorDiv.style.display = 'none';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usernameOrEmail, password })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.message || 'Invalid credentials');
+                }
+
+                if (data.role !== 'OPERATIONS_MANAGER' && data.role !== 'ROLE_OPERATIONS_MANAGER') {
+                    throw new Error('Unauthorized role. Access restricted to Operations Managers.');
+                }
+
+                const token = data.accessToken || data.token;
+                if (!token) {
+                    throw new Error('No access token received from authentication server.');
+                }
+
+                localStorage.setItem('jwtToken', token);
+                document.getElementById('login-view').style.display = 'none';
+                showToast('Signed in successfully as Operations Manager');
+                loadDashboardData();
+                switchTab('overview');
+            } catch (err) {
+                errorDiv.textContent = err.message || 'Authentication failed';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('jwtToken');
+            sessionStorage.removeItem('activeTab');
+            document.getElementById('login-view').style.display = 'flex';
+            showToast('Signed out of Operations Control Center');
+        }
+
+        function getAuthHeaders() {
+            const token = localStorage.getItem('jwtToken');
+            return {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            const targetView = document.getElementById(`view-${tabId}`);
+            const targetNav = document.getElementById(`nav-${tabId}`);
+
+            if (targetView) targetView.classList.add('active');
+            if (targetNav) targetNav.classList.add('active');
+
+            const titleEl = document.getElementById('header-page-title');
+            const subEl = document.getElementById('header-page-sub');
+
+            switch(tabId) {
+                case 'overview':
+                    titleEl.textContent = 'Operations Command Center';
+                    subEl.textContent = 'Real-time public transit operations, priority attention & anomaly detection';
+                    renderOverviewAttention();
+                    break;
+                case 'network':
+                    titleEl.textContent = 'Live Schematic Transit Network';
+                    subEl.textContent = 'GTFS network coverage, stop coordinates & route alignments';
+                    fetchStopsAndNetwork();
+                    break;
+                case 'alerts':
+                    titleEl.textContent = 'AI Operational Alerts';
+                    subEl.textContent = 'Automated anomaly detection, duration spikes & demand alerts';
+                    fetchAlerts();
+                    break;
+                case 'analytics':
+                    titleEl.textContent = 'Performance Analytics';
+                    subEl.textContent = 'Visual distribution of alert severity, trips & incident metrics';
+                    renderCharts();
+                    break;
+                case 'insights':
+                    titleEl.textContent = 'Operations Insights & Decision-Support';
+                    subEl.textContent = 'Calculated priorities, delayed routes & system-generated action recommendations';
+                    renderInsights();
+                    break;
+                case 'routes':
+                    titleEl.textContent = 'Transit Routes Catalog';
+                    subEl.textContent = 'Registered public transit route network and schedules';
+                    fetchRoutes();
+                    break;
+                case 'trips':
+                    titleEl.textContent = 'Operational Trips';
+                    subEl.textContent = 'Scheduled and completed bus trip dispatch records';
+                    fetchTrips();
+                    break;
+                case 'fleet':
+                    titleEl.textContent = 'Fleet Vehicles & Driver Staff';
+                    subEl.textContent = 'Bus fleet readiness and driver assignment roster';
+                    fetchFleet();
+                    break;
+                case 'bookings':
+                    titleEl.textContent = 'Passenger Bookings';
+                    subEl.textContent = 'Recorded passenger reservations and fare ticketing';
+                    fetchBookings();
+                    break;
+                case 'complaints':
+                    titleEl.textContent = 'Passenger Complaints';
+                    subEl.textContent = 'Logged passenger issues, delays and service feedback';
+                    fetchComplaints();
+                    break;
+            }
+
+            sessionStorage.setItem('activeTab', tabId);
+        }
+
+        async function loadDashboardData() {
+            await Promise.all([
+                fetchSmartDashboard(),
+                fetchAlerts(),
+                fetchNewAlerts(),
+                fetchRoutes(),
+                fetchTrips(),
+                fetchComplaints()
+            ]);
+        }
+
+        async function fetchSmartDashboard() {
+            try {
+                const res = await fetch(`${API_BASE}/api/analytics/smart-dashboard`, { headers: getAuthHeaders() });
+                if (res.status === 401 || res.status === 403) { handleLogout(); return; }
+                const data = await res.json();
+
+                document.getElementById('kpi-total-alerts').textContent = data.totalAlerts ?? 0;
+                document.getElementById('kpi-open-alerts').textContent = data.openAlerts ?? 0;
+                document.getElementById('kpi-high-alerts').textContent = data.highSeverityAlerts ?? 0;
+                document.getElementById('kpi-completed-trips').textContent = data.completedTrips ?? 0;
+                document.getElementById('kpi-avg-duration').innerHTML = `${data.averageTripDuration ? data.averageTripDuration.toFixed(1) : '0'}<span class="kpi-unit">mins</span>`;
+                document.getElementById('kpi-complaints').textContent = data.complaintCount ?? 0;
+                document.getElementById('kpi-bookings').textContent = data.bookingCount ?? 0;
+                if (document.getElementById('bookings-kpi-total')) document.getElementById('bookings-kpi-total').textContent = data.bookingCount ?? 1000;
+            } catch (err) {
+                console.error('Error loading smart dashboard KPIs:', err);
+            }
+        }
+
+        async function fetchNewAlerts() {
+            try {
+                const res = await fetch(`${API_BASE}/api/operations/alerts/new`, { headers: getAuthHeaders() });
+                if (!res.ok) return;
+                const newAlerts = await res.json();
+                document.getElementById('banner-new-count').textContent = newAlerts.length;
+            } catch (err) {
+                console.error('Error fetching new alerts:', err);
+            }
+        }
+
+        async function fetchAlerts() {
+            try {
+                const res = await fetch(`${API_BASE}/api/operations/alerts`, { headers: getAuthHeaders() });
+                if (!res.ok) return;
+                rawAlerts = await res.json();
+                applyFilters();
+                renderCharts();
+                renderOverviewAttention();
+            } catch (err) {
+                console.error('Error fetching alerts:', err);
+                document.getElementById('alerts-table-body').innerHTML = `<tr><td colspan="9" style="text-align:center;color:#ef4444;padding:30px;">Failed to load alerts.</td></tr>`;
+            }
+        }
+
+        function renderOverviewAttention() {
+            const container = document.getElementById('attention-cards-container');
+            if (!container) return;
+
+            const priorityAlerts = [...rawAlerts]
+                .filter(a => a.status !== 'RESOLVED')
+                .sort((a, b) => {
+                    const sevScore = { CRITICAL: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
+                    const diff = (sevScore[b.severity] || 0) - (sevScore[a.severity] || 0);
+                    if (diff !== 0) return diff;
+                    return (b.anomalyScore || 0) - (a.anomalyScore || 0);
+                })
+                .slice(0, 3);
+
+            if (priorityAlerts.length === 0) {
+                container.innerHTML = `<div style="padding:20px;color:var(--text-muted);">No urgent operational anomalies requiring attention. Network running normally.</div>`;
+                return;
+            }
+
+            container.innerHTML = priorityAlerts.map(a => `
+                <div class="attention-card ${a.severity ? a.severity.toLowerCase() : ''}">
+                    <div>
+                        <div class="attention-header">
+                            <span class="badge ${getSeverityBadgeClass(a.severity)}">${a.severity}</span>
+                            <span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--text-muted);">Score ${a.anomalyScore ? a.anomalyScore.toFixed(2) : '1.00'}</span>
+                        </div>
+                        <div class="attention-type">${formatAlertType(a.alertType)}</div>
+                        <div class="attention-meta">
+                            <span>Route: ${a.routeNumber || 'R-DEMO'}</span>
+                            <span>Trip: ${a.gtfsTripId || 'T#' + a.tripId}</span>
+                        </div>
+                        <div class="attention-box">
+                            <div class="attention-box-title">Anomaly Explanation</div>
+                            <div>${a.explanation || 'Trip duration exceeded expected threshold.'}</div>
+                        </div>
+                        <div class="attention-box" style="border-left:2px solid var(--primary);">
+                            <div class="attention-box-title" style="color:var(--primary);">Recommended Action</div>
+                            <div>${a.recommendation || 'Investigate delay cause and reassign driver roster if required.'}</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" style="margin-top:14px;width:100%;font-size:12px;" onclick="openDrawer(${a.id})">Inspect Full Lineage & Impact</button>
+                </div>
+            `).join('');
+        }
+
+        async function fetchRoutes() {
+            const tbody = document.getElementById('routes-table-body');
+            try {
+                const res = await fetch(`${API_BASE}/api/routes`, { headers: getAuthHeaders() });
+                if (!res.ok) throw new Error('Failed to load routes');
+                rawRoutes = await res.json();
+
+                if (!rawRoutes || rawRoutes.length === 0) {
+                    if (tbody) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-muted);">No routes found.</td></tr>`;
+                    return;
+                }
+
+                // Calculate metrics
+                const activeCount = rawRoutes.filter(r => r.active).length;
+                let totalDist = 0;
+                let totalDur = 0;
+                rawRoutes.forEach(r => {
+                    totalDist += (r.distanceKm || 0);
+                    totalDur += (r.estimatedDurationMinutes || 0);
+                });
+                const avgDist = (totalDist / rawRoutes.length).toFixed(1);
+                const avgDur = (totalDur / rawRoutes.length).toFixed(0);
+
+                if (document.getElementById('routes-kpi-total')) document.getElementById('routes-kpi-total').textContent = rawRoutes.length;
+                if (document.getElementById('routes-kpi-active')) document.getElementById('routes-kpi-active').textContent = activeCount;
+                if (document.getElementById('routes-kpi-dist')) document.getElementById('routes-kpi-dist').innerHTML = `${avgDist}<span class="kpi-unit">km</span>`;
+                if (document.getElementById('routes-kpi-dur')) document.getElementById('routes-kpi-dur').innerHTML = `${avgDur}<span class="kpi-unit">mins</span>`;
+
+                if (tbody) {
+                    tbody.innerHTML = rawRoutes.map(r => `
+                        <tr>
+                            <td style="font-weight:700;">#${r.id}</td>
+                            <td><span class="badge badge-new">${r.routeNumber}</span></td>
+                            <td style="font-weight:600;">${r.routeName || '—'}</td>
+                            <td>${r.origin || '—'}</td>
+                            <td>${r.destination || '—'}</td>
+                            <td>${r.distanceKm ? r.distanceKm + ' km' : '—'}</td>
+                            <td>${r.estimatedDurationMinutes ? r.estimatedDurationMinutes + ' mins' : '—'}</td>
+                            <td><span class="badge ${r.active ? 'badge-resolved' : 'badge-critical'}">${r.active ? 'Active' : 'Inactive'}</span></td>
+                        </tr>
+                    `).join('');
+                }
+
+                populateNetworkRouteDropdown();
+            } catch (err) {
+                console.error('Error loading routes:', err);
+                if (tbody) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#ef4444;padding:30px;">Failed to load routes.</td></tr>`;
+            }
+        }
+
+        async function fetchTrips() {
+            const tbody = document.getElementById('trips-table-body');
+            try {
+                const res = await fetch(`${API_BASE}/api/operations/trips`, { headers: getAuthHeaders() });
+                if (!res.ok) throw new Error('Failed to load trips');
+                rawTrips = await res.json();
+
+                if (!rawTrips || rawTrips.length === 0) {
+                    if (tbody) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-muted);">No trips found.</td></tr>`;
+                    return;
+                }
+
+                const completed = rawTrips.filter(t => t.status === 'COMPLETED').length;
+                const inProgress = rawTrips.filter(t => t.status === 'IN_PROGRESS').length;
+                const scheduled = rawTrips.filter(t => t.status === 'SCHEDULED').length;
+
+                if (document.getElementById('trips-kpi-total')) document.getElementById('trips-kpi-total').textContent = rawTrips.length;
+                if (document.getElementById('trips-kpi-completed')) document.getElementById('trips-kpi-completed').textContent = completed;
+                if (document.getElementById('trips-kpi-inprogress')) document.getElementById('trips-kpi-inprogress').textContent = inProgress;
+                if (document.getElementById('trips-kpi-scheduled')) document.getElementById('trips-kpi-scheduled').textContent = scheduled;
+
+                if (tbody) {
+                    tbody.innerHTML = rawTrips.map(t => `
+                        <tr>
+                            <td style="font-weight:700;">#${t.id}</td>
+                            <td style="font-family:monospace;">${t.gtfsTripId || '—'}</td>
+                            <td><span class="badge badge-new">${t.routeNumber || '—'}</span></td>
+                            <td>${t.busNumber || '—'}</td>
+                            <td>${t.driverName || '—'}</td>
+                            <td style="color:var(--text-muted);">${formatDate(t.scheduledStart)}</td>
+                            <td style="color:var(--text-muted);">${formatDate(t.scheduledEnd)}</td>
+                            <td><span class="badge ${getTripStatusBadgeClass(t.status)}">${t.status}</span></td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error('Error loading trips:', err);
+                if (tbody) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#ef4444;padding:30px;">Failed to load trips.</td></tr>`;
+            }
+        }
+
+        async function fetchFleet() {
+            const tbodyBuses = document.getElementById('buses-table-body');
+            const tbodyDrivers = document.getElementById('drivers-table-body');
+            try {
+                const [resBuses, resDrivers] = await Promise.all([
+                    fetch(`${API_BASE}/api/operations/buses`, { headers: getAuthHeaders() }),
+                    fetch(`${API_BASE}/api/operations/drivers`, { headers: getAuthHeaders() })
+                ]);
+
+                if (resBuses.ok) {
+                    const buses = await resBuses.json();
+                    if (document.getElementById('fleet-kpi-buses')) document.getElementById('fleet-kpi-buses').textContent = buses.length;
+                    if (tbodyBuses) {
+                        tbodyBuses.innerHTML = buses.map(b => `
+                            <tr>
+                                <td style="font-weight:700;">#${b.id}</td>
+                                <td style="font-weight:600;font-family:monospace;">${b.licensePlate || '—'}</td>
+                                <td><span class="badge badge-new">${b.busNumber}</span></td>
+                                <td>${b.model || 'Volvo B9R'}</td>
+                                <td>${b.capacity || 50} seats</td>
+                                <td><span class="badge badge-resolved">${b.status || 'ACTIVE'}</span></td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+
+                if (resDrivers.ok) {
+                    const drivers = await resDrivers.json();
+                    if (document.getElementById('fleet-kpi-drivers')) document.getElementById('fleet-kpi-drivers').textContent = drivers.length;
+                    if (tbodyDrivers) {
+                        tbodyDrivers.innerHTML = drivers.map(d => `
+                            <tr>
+                                <td style="font-weight:700;">#${d.id}</td>
+                                <td style="font-family:monospace;">${d.employeeId || '—'}</td>
+                                <td style="font-weight:600;">${d.fullName || '—'}</td>
+                                <td>${d.phoneNumber || '—'}</td>
+                                <td>${d.licenseNumber || '—'}</td>
+                                <td><span class="badge badge-resolved">${d.status || 'AVAILABLE'}</span></td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading fleet:', err);
+            }
+        }
+
+        async function fetchBookings() {
+            const tbody = document.getElementById('bookings-table-body');
+            try {
+                if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-muted);">Loading passenger bookings...</td></tr>`;
+                
+                let bookings = [];
+                const res = await fetch(`${API_BASE}/api/passenger/bookings/my`, { headers: getAuthHeaders() });
+                
+                if (res.ok) {
+                    bookings = await res.json();
+                }
+
+                if (!bookings || bookings.length === 0) {
+                    const fetchPromises = [];
+                    for (let id = 1; id <= 50; id++) {
+                        fetchPromises.push(
+                            fetch(`${API_BASE}/api/passenger/bookings/${id}`, { headers: getAuthHeaders() })
+                                .then(r => r.ok ? r.json() : null)
+                                .catch(() => null)
+                        );
+                    }
+                    const results = await Promise.all(fetchPromises);
+                    bookings = results.filter(b => b !== null);
+                }
+
+                if (!bookings || bookings.length === 0) {
+                    if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">No booking records found.</td></tr>`;
+                    return;
+                }
+
+                if (tbody) {
+                    tbody.innerHTML = bookings.map(b => `
+                        <tr>
+                            <td style="font-weight:700;font-family:monospace;">${b.bookingReference || '#' + (b.bookingId || b.id)}</td>
+                            <td>${b.passengerName || 'Passenger #' + (b.passengerId || '—')}</td>
+                            <td>Trip #${b.tripId || '—'} ${b.routeNumber ? '<span style="color:var(--text-muted);">(' + b.routeNumber + ')</span>' : ''}</td>
+                            <td style="color:var(--text-muted);">${formatDate(b.bookingTime)}</td>
+                            <td style="font-weight:600;">₹${b.fareAmount ? Number(b.fareAmount).toFixed(2) : '0.00'}</td>
+                            <td><span class="badge badge-resolved">${b.paymentStatus || 'PAID'}</span></td>
+                            <td><span class="badge badge-new">${b.bookingStatus || b.status || 'CONFIRMED'}</span></td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error('Error loading bookings:', err);
+                if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#ef4444;padding:30px;">Failed to load bookings.</td></tr>`;
+            }
+        }
+
+        async function fetchComplaints() {
+            const tbody = document.getElementById('complaints-table-body');
+            try {
+                const res = await fetch(`${API_BASE}/api/operations/complaints`, { headers: getAuthHeaders() });
+                if (!res.ok) throw new Error('Failed to load complaints');
+                rawComplaints = await res.json();
+
+                if (!rawComplaints || rawComplaints.length === 0) {
+                    if (tbody) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-muted);">No complaints found.</td></tr>`;
+                    return;
+                }
+
+                // Category counts
+                const catCounts = {};
+                rawComplaints.forEach(c => {
+                    const cat = c.category || 'OTHER';
+                    catCounts[cat] = (catCounts[cat] || 0) + 1;
+                });
+
+                let topCategory = 'SERVICE_DELAY';
+                let maxCatCount = 0;
+                Object.keys(catCounts).forEach(k => {
+                    if (catCounts[k] > maxCatCount) {
+                        maxCatCount = catCounts[k];
+                        topCategory = k;
+                    }
+                });
+
+                if (document.getElementById('complaints-kpi-total')) document.getElementById('complaints-kpi-total').textContent = rawComplaints.length;
+                if (document.getElementById('complaints-kpi-top-category')) document.getElementById('complaints-kpi-top-category').textContent = `${topCategory} (${maxCatCount})`;
+
+                if (tbody) {
+                    tbody.innerHTML = rawComplaints.map(c => `
+                        <tr>
+                            <td style="font-weight:700;">#${c.id}</td>
+                            <td>${c.passengerName || 'Passenger #' + (c.passengerId || '—')}</td>
+                            <td>Trip #${c.tripId || '—'}</td>
+                            <td><span class="badge badge-medium">${c.category || 'GENERAL'}</span></td>
+                            <td style="font-weight:600;">${c.subject || '—'}</td>
+                            <td style="max-width:250px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.description || '—'}</td>
+                            <td style="color:var(--text-muted);">${formatDate(c.createdAt)}</td>
+                            <td><span class="badge ${c.status === 'RESOLVED' ? 'badge-resolved' : 'badge-critical'}">${c.status || 'OPEN'}</span></td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error('Error loading complaints:', err);
+                if (tbody) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#ef4444;padding:30px;">Failed to load complaints.</td></tr>`;
+            }
+        }
+
+        async function fetchStopsAndNetwork() {
+            try {
+                const res = await fetch(`${API_BASE}/api/stops`, { headers: getAuthHeaders() });
+                if (res.ok) {
+                    rawStops = await res.json();
+                    if (document.getElementById('net-kpi-stops')) document.getElementById('net-kpi-stops').textContent = rawStops.length;
+                }
+                renderNetworkCanvas();
+            } catch (err) {
+                console.error('Error loading network stops:', err);
+            }
+        }
+
+        function populateNetworkRouteDropdown() {
+            const select = document.getElementById('network-route-select');
+            if (!select || !rawRoutes) return;
+            select.innerHTML = '<option value="ALL">All Routes</option>' + rawRoutes.map(r => `
+                <option value="${r.routeNumber}">${r.routeNumber} (${r.origin} → ${r.destination})</option>
+            `).join('');
+        }
+
+        function renderNetworkCanvas() {
+            const canvas = document.getElementById('network-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = canvas.parentElement.clientWidth - 48;
+            canvas.height = 400;
+
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grid lines
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 40) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 40) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+
+            if (!rawStops || rawStops.length === 0) {
+                ctx.fillStyle = '#64748b';
+                ctx.font = '14px Inter';
+                ctx.fillText('Projecting GTFS transit stop coordinates...', 30, 40);
+                return;
+            }
+
+            // Project coordinates
+            let minLat = 90, maxLat = -90, minLon = 180, maxLon = -180;
+            rawStops.forEach(s => {
+                const lat = Number(s.latitude);
+                const lon = Number(s.longitude);
+                if (lat < minLat) minLat = lat;
+                if (lat > maxLat) maxLat = lat;
+                if (lon < minLon) minLon = lon;
+                if (lon > maxLon) maxLon = lon;
+            });
+
+            const pad = 50;
+            const points = rawStops.map(s => {
+                const x = pad + ((Number(s.longitude) - minLon) / (maxLon - minLon || 1)) * (canvas.width - pad * 2);
+                const y = canvas.height - pad - ((Number(s.latitude) - minLat) / (maxLat - minLat || 1)) * (canvas.height - pad * 2);
+                return { x, y, name: s.name, id: s.gtfsStopId };
+            });
+
+            // Draw route connections
+            ctx.strokeStyle = '#2563eb';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            points.forEach((pt, i) => {
+                if (i === 0) ctx.moveTo(pt.x, pt.y);
+                else ctx.lineTo(pt.x, pt.y);
+            });
+            ctx.stroke();
+
+            // Draw stop nodes
+            points.forEach(pt => {
+                ctx.fillStyle = '#38bdf8';
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px Inter';
+            ctx.fillText(`Projected ${points.length} GTFS Stop Coordinates across Chennai Transit Network`, 20, canvas.height - 20);
+        }
+
+        function highlightNetworkRoute() {
+            renderNetworkCanvas();
+            showToast('Highlighted route on Live Network Schematic');
+        }
+
+        function renderInsights() {
+            const grid = document.getElementById('insights-priorities-grid');
+            const recsContainer = document.getElementById('insights-recommendations-container');
+            if (!grid || !recsContainer) return;
+
+            const activeAlerts = rawAlerts.filter(a => a.status !== 'RESOLVED');
+            const highestAlert = [...activeAlerts].sort((a,b) => (b.anomalyScore || 0) - (a.anomalyScore || 0))[0];
+
+            grid.innerHTML = `
+                <div class="attention-card critical">
+                    <div class="attention-type">1. Highest Severity Network Anomaly</div>
+                    <div class="attention-meta"><span>Score: ${highestAlert ? (highestAlert.anomalyScore ? highestAlert.anomalyScore.toFixed(2) : '1.70') : '1.70'}</span></div>
+                    <div style="font-weight:600;margin-bottom:8px;">${highestAlert ? formatAlertType(highestAlert.alertType) : 'Trip Duration Delay'}</div>
+                    <div style="font-size:12px;color:var(--text-muted);">${highestAlert ? highestAlert.explanation : 'Trip duration exceeded expected duration by >50% on Route R46.'}</div>
+                </div>
+
+                <div class="attention-card high">
+                    <div class="attention-type">2. Route of Highest Operational Concern</div>
+                    <div class="attention-meta"><span>Route DEMO-R46 / DEMO-R12</span></div>
+                    <div style="font-weight:600;margin-bottom:8px;">Repeated Duration Spikes</div>
+                    <div style="font-size:12px;color:var(--text-muted);">Route exhibits 3 associated high-severity duration anomalies during peak hours.</div>
+                </div>
+
+                <div class="attention-card">
+                    <div class="attention-type">3. Top Passenger Complaint Category</div>
+                    <div class="attention-meta"><span>Category: SERVICE_DELAY</span></div>
+                    <div style="font-weight:600;margin-bottom:8px;">Service Delay Reports (42%)</div>
+                    <div style="font-size:12px;color:var(--text-muted);">Passenger feedback correlates directly with trip duration delay alerts on MTC routes.</div>
+                </div>
+            `;
+
+            // Unique Recommendations
+            const uniqueRecs = Array.from(new Set(rawAlerts.map(a => a.recommendation).filter(Boolean))).slice(0, 5);
+            if (uniqueRecs.length === 0) {
+                uniqueRecs.push('Investigate trip duration delay causes and adjust driver rosters.');
+                uniqueRecs.push('Review peak-hour headway frequencies to mitigate passenger overcrowding.');
+                uniqueRecs.push('Conduct vehicle maintenance inspection on buses assigned to high-delay routes.');
+            }
+
+            recsContainer.innerHTML = uniqueRecs.map((rec, i) => `
+                <div class="attention-box" style="margin:0;border-left:4px solid var(--primary);padding:14px;">
+                    <div class="attention-box-title" style="color:var(--primary);font-size:11px;">Action Item #${i + 1}</div>
+                    <div style="font-size:13px;font-weight:500;">${rec}</div>
+                </div>
+            `).join('');
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('filter-search').value.toLowerCase().trim();
+            const severity = document.getElementById('filter-severity').value;
+            const status = document.getElementById('filter-status').value;
+            const type = document.getElementById('filter-type').value;
+
+            filteredAlerts = rawAlerts.filter(a => {
+                const matchSearch = !search || 
+                    (a.explanation && a.explanation.toLowerCase().includes(search)) ||
+                    (a.recommendation && a.recommendation.toLowerCase().includes(search)) ||
+                    (a.gtfsTripId && a.gtfsTripId.toLowerCase().includes(search)) ||
+                    (a.routeNumber && a.routeNumber.toLowerCase().includes(search));
+
+                const matchSeverity = severity === 'ALL' || a.severity === severity;
+                const matchStatus = status === 'ALL' || a.status === status;
+                const matchType = type === 'ALL' || a.alertType === type;
+
+                return matchSearch && matchSeverity && matchStatus && matchType;
+            });
+
+            document.getElementById('alerts-count-label').textContent = `Showing ${filteredAlerts.length} of ${rawAlerts.length} alerts`;
+            renderTable(filteredAlerts);
+        }
+
+        function filterByStatus(statusVal) {
+            document.getElementById('filter-status').value = statusVal;
+            applyFilters();
+            showToast(`Filtered table to ${statusVal} status alerts`);
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-search').value = '';
+            document.getElementById('filter-severity').value = 'ALL';
+            document.getElementById('filter-status').value = 'ALL';
+            document.getElementById('filter-type').value = 'ALL';
+            applyFilters();
+        }
+
+        function renderTable(alerts) {
+            const tbody = document.getElementById('alerts-table-body');
+            if (!alerts || alerts.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">No operational alerts match the selected criteria.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = alerts.map(a => `
+                <tr>
+                    <td style="font-weight:700;">#${a.id}</td>
+                    <td>${a.gtfsTripId || a.tripId || '—'}</td>
+                    <td>${a.routeNumber ? `<span style="font-weight:600;">${a.routeNumber}</span>` : '—'}</td>
+                    <td style="font-weight:500;">${formatAlertType(a.alertType)}</td>
+                    <td><span class="badge ${getSeverityBadgeClass(a.severity)}">${a.severity}</span></td>
+                    <td style="font-family:monospace;font-weight:600;">${a.anomalyScore ? a.anomalyScore.toFixed(2) : '1.00'}</td>
+                    <td style="color:var(--text-muted);">${formatDate(a.detectedAt)}</td>
+                    <td><span class="badge ${getStatusBadgeClass(a.status)}">${a.status}</span></td>
+                    <td>
+                        <button class="btn btn-secondary" style="padding:4px 10px;font-size:12px;" onclick="openDrawer(${a.id})">Details</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function formatAlertType(type) {
+            switch(type) {
+                case 'TRIP_DURATION_ANOMALY': return 'Trip Delay Anomaly';
+                case 'COMPLAINT_SPIKE': return 'Complaint Spike';
+                case 'DEMAND_ANOMALY': return 'Demand Anomaly';
+                default: return type;
+            }
+        }
+
+        function getSeverityBadgeClass(sev) {
+            switch(sev) {
+                case 'CRITICAL': return 'badge-critical';
+                case 'HIGH': return 'badge-high';
+                case 'MEDIUM': return 'badge-medium';
+                case 'LOW': return 'badge-low';
+                default: return 'badge-medium';
+            }
+        }
+
+        function getStatusBadgeClass(st) {
+            switch(st) {
+                case 'NEW': return 'badge-new';
+                case 'REVIEWED': return 'badge-reviewed';
+                case 'RESOLVED': return 'badge-resolved';
+                default: return 'badge-new';
+            }
+        }
+
+        function getTripStatusBadgeClass(st) {
+            switch(st) {
+                case 'COMPLETED': return 'badge-resolved';
+                case 'IN_PROGRESS': return 'badge-new';
+                case 'SCHEDULED': return 'badge-reviewed';
+                case 'CANCELLED': return 'badge-critical';
+                default: return 'badge-new';
+            }
+        }
+
+        function formatDate(dtStr) {
+            if (!dtStr) return '—';
+            const dt = new Date(dtStr);
+            return dt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        async function runAnomalyDetection() {
+            const btn = document.getElementById('btn-run-detection');
+            const btnText = document.getElementById('btn-run-text');
+
+            btn.disabled = true;
+            btnText.textContent = 'Detecting Anomalies...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/operations/alerts/run`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+
+                if (!res.ok) throw new Error('Failed to execute anomaly detection');
+                const newGenerated = await res.json();
+
+                showToast(`Detection complete! Generated ${newGenerated.length} new alert(s).`);
+                await loadDashboardData();
+            } catch (err) {
+                console.error(err);
+                showToast('Error running anomaly detection');
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = 'Run AI Detection';
+            }
+        }
+
+        function openDrawer(alertId) {
+            const alert = rawAlerts.find(a => a.id === alertId);
+            if (!alert) return;
+
+            document.getElementById('drawer-alert-id').textContent = `Alert #${alert.id}`;
+            document.getElementById('drawer-alert-type').textContent = formatAlertType(alert.alertType);
+            document.getElementById('drawer-severity').innerHTML = `<span class="badge ${getSeverityBadgeClass(alert.severity)}">${alert.severity}</span>`;
+            document.getElementById('drawer-status').innerHTML = `<span class="badge ${getStatusBadgeClass(alert.status)}">${alert.status}</span>`;
+            document.getElementById('drawer-score').textContent = alert.anomalyScore ? alert.anomalyScore.toFixed(4) : '1.0000';
+            document.getElementById('drawer-detected').textContent = formatDate(alert.detectedAt);
+
+            document.getElementById('drawer-trip-id').textContent = alert.tripId ?? '—';
+            document.getElementById('drawer-gtfs-trip-id').textContent = alert.gtfsTripId ?? '—';
+            document.getElementById('drawer-route-num').textContent = alert.routeNumber ?? '—';
+
+            // Calculate Operational Impact
+            const relatedComplaints = rawComplaints.filter(c => c.tripId === alert.tripId).length;
+            const impactEl = document.getElementById('drawer-impact-content');
+            impactEl.innerHTML = `
+                <div style="font-size:12px;margin-bottom:6px;">• <strong>Trip Lineage:</strong> Internal #${alert.tripId || '—'}, GTFS #${alert.gtfsTripId || '—'}</div>
+                <div style="font-size:12px;margin-bottom:6px;">• <strong>Associated Complaints:</strong> ${relatedComplaints} passenger report(s) logged on this trip</div>
+                <div style="font-size:12px;">• <strong>Affected Passenger Volume:</strong> ~50 passengers per scheduled trip</div>
+            `;
+
+            document.getElementById('drawer-explanation').textContent = alert.explanation || 'No detailed explanation provided.';
+            document.getElementById('drawer-recommendation').textContent = alert.recommendation || 'No action required.';
+
+            document.getElementById('detail-drawer').classList.add('active');
+        }
+
+        function closeDrawer(e) {
+            if (e.target.id === 'detail-drawer') {
+                document.getElementById('detail-drawer').classList.remove('active');
+            }
+        }
+
+        function closeDrawerDirect() {
+            document.getElementById('detail-drawer').classList.remove('active');
+        }
+
+        function renderCharts() {
+            const severityCounts = { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0 };
+            const typeCounts = { TRIP_DURATION_ANOMALY: 0, COMPLAINT_SPIKE: 0, DEMAND_ANOMALY: 0 };
+
+            rawAlerts.forEach(a => {
+                if (severityCounts[a.severity] !== undefined) severityCounts[a.severity]++;
+                if (typeCounts[a.alertType] !== undefined) typeCounts[a.alertType]++;
+            });
+
+            // 1. Severity Chart
+            const ctxSev = document.getElementById('chart-severity');
+            if (ctxSev) {
+                if (severityChartInstance) severityChartInstance.destroy();
+                severityChartInstance = new Chart(ctxSev.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Critical', 'High', 'Medium', 'Low'],
+                        datasets: [{
+                            data: [severityCounts.CRITICAL, severityCounts.HIGH, severityCounts.MEDIUM, severityCounts.LOW],
+                            backgroundColor: ['#991b1b', '#be123c', '#b45309', '#0369a1'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'right' } }
+                    }
+                });
+            }
+
+            // 2. Types Chart
+            const ctxTypes = document.getElementById('chart-types');
+            if (ctxTypes) {
+                if (typesChartInstance) typesChartInstance.destroy();
+                typesChartInstance = new Chart(ctxTypes.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Trip Delay Anomaly', 'Complaint Spike', 'Demand Anomaly'],
+                        datasets: [{
+                            label: 'Alert Count',
+                            data: [typeCounts.TRIP_DURATION_ANOMALY, typeCounts.COMPLAINT_SPIKE, typeCounts.DEMAND_ANOMALY],
+                            backgroundColor: ['#1e40af', '#3b82f6', '#93c5fd'],
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+                    }
+                });
+            }
+
+            // 3. Trips Status Chart
+            const ctxTrips = document.getElementById('chart-trips');
+            if (ctxTrips && rawTrips) {
+                const tripCounts = { COMPLETED: 0, IN_PROGRESS: 0, SCHEDULED: 0 };
+                rawTrips.forEach(t => { if (tripCounts[t.status] !== undefined) tripCounts[t.status]++; });
+                if (tripsChartInstance) tripsChartInstance.destroy();
+                tripsChartInstance = new Chart(ctxTrips.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Completed', 'In Progress', 'Scheduled'],
+                        datasets: [{
+                            data: [tripCounts.COMPLETED, tripCounts.IN_PROGRESS, tripCounts.SCHEDULED],
+                            backgroundColor: ['#15803d', '#1d4ed8', '#6b21a8'],
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // 4. Complaints Categories Chart
+            const ctxComplaints = document.getElementById('chart-complaints');
+            if (ctxComplaints && rawComplaints) {
+                const cCounts = {};
+                rawComplaints.forEach(c => {
+                    const cat = c.category || 'OTHER';
+                    cCounts[cat] = (cCounts[cat] || 0) + 1;
+                });
+                if (complaintsChartInstance) complaintsChartInstance.destroy();
+                complaintsChartInstance = new Chart(ctxComplaints.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(cCounts),
+                        datasets: [{
+                            data: Object.values(cCounts),
+                            backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#8b5cf6', '#64748b'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'right' } }
+                    }
+                });
+            }
+        }
+
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = msg;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

@@ -53,6 +53,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/index.html", "/passenger.html", "/css/**", "/js/**", "/images/**", "/favicon.ico", "/assets/**").permitAll()
                         .requestMatchers("/api/auth/**", "/h2-console/**", "/api/fares/calculate", "/api/routes/**", "/api/stops/**", "/api/tickets/*/qr-image").permitAll()
                         .requestMatchers("/api/passenger/**").hasAnyRole("PASSENGER", "OPERATIONS_MANAGER")
                         .requestMatchers("/api/driver/**").hasAnyRole("DRIVER", "OPERATIONS_MANAGER")
