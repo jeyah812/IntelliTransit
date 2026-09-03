@@ -1,0 +1,462 @@
+stop_id,stop_name,stop_lat,stop_lon
+9831,Anna Nagar West Depot,13.09370,80.19842
+9158,Foreshore Estate Bus Terminus,13.02264,80.27635
+9262,Santhome Church,13.03298,80.27965
+78,Metrological Department Sterling Road,13.06784,80.24648
+9919,Ambattur Industrial Estate,13.09931,80.17033
+9341,Ashok Nagar Canara Bank,13.03986,80.21209
+5669,Icf,13.10009,80.21555
+5666,Joint Office,13.09960,80.22983
+5668,Kambar Arangam,13.09908,80.21947
+5665,Noor Hotel,13.09841,80.23502
+5910,Adyar Depot,12.99880,80.25588
+6125,Kelambakkam V A O Office,12.79383,80.22260
+5597,Pondy Bazar Globus,13.04014,80.24331
+6643,Selaiyur,12.92240,80.13835
+5660,Motcham Theatre Or Grt,13.08589,80.25018
+5909,Jayanthi Theatre,12.98872,80.25585
+8993,Adyar Signal,13.00639,80.25756
+5805,Adyar Old Depot,13.00653,80.25378
+5760,Adyar Signal,13.00716,80.25884
+5750,Madhya Kailash,13.00682,80.24674
+8994,Adyar Signal,13.00649,80.25737
+5804,Adyar Old Depot,13.00667,80.25320
+10251,Gemini P H Or U S I S,13.05268,80.25099
+6358,Semmancheri,12.86054,80.22667
+5658,Dharma Prakash Or Mctm School,13.08066,80.25472
+9057,Cipet,13.01460,80.20477
+5917,Queen Marys College,13.04586,80.28021
+5777,City Centre Or Kalyani Hospital,13.04383,80.27170
+908,Chellammal College,13.01215,80.22034
+9455,Meersahibpet Market,13.05341,80.26860
+5924,Yellow Pages,13.04452,80.26905
+4712,Vadapalani Thiru Nagar,13.05791,80.21166
+9244,Ashok Nagar 11th Avenue,13.03170,80.21259
+49,K.K.Nagar E.S.I Hospital,13.03522,80.20863
+5764,Raj Bhavan Quarters,13.01056,80.22519
+9816,Kavery Colony,13.09177,80.22373
+11013,S S Super Market,13.09099,80.21813
+10324,Saravana,13.09017,80.25105
+9318,Nochikuppam,13.03792,80.28023
+9313,Luz Corner,13.03731,80.26621
+9309,Postal Colony,13.03661,80.22075
+9636,Pachaiyappas College,13.07607,80.23465
+9449,Ice House Police Station,13.05257,80.27436
+9634,T N Sports Authority,13.07562,80.25866
+5826,Eldams Road,13.03889,80.25000
+11140,Vijaya Maruthi,13.09292,80.20645
+4940,Vadapalani,13.04634,80.21242
+6758,Clive Battery,13.09900,80.29374
+6490,Vandalur Gate,12.89346,80.08633
+8501,Ponds Company,12.96168,80.14592
+9456,Meersahibpet Market,13.05349,80.26899
+9172,Chettipedu,13.02400,80.02322
+6666,Kamarajapuram,12.92339,80.15499
+135,Thiruvalluvar Statue,13.04158,80.26811
+6839,Perambur Bus Terminus,13.10860,80.24824
+8558,Sriperumbudur Bus Terminal,12.96633,79.94468
+6099,Kelambakkam Bus Terminal,12.78649,80.22192
+82,Mgr Central Railway Station,13.08173,80.27532
+6748,Tambaram Sanatorium B.T,12.93694,80.12771
+11095,Ishpahani Center,13.05443,80.24997
+123,Shastri Bhavan,13.06685,80.24793
+9164,Saidapet,13.02267,80.22699
+5785,Chinnamalai Or Saidapet Court,13.01364,80.22658
+5823,Thiyagarayanagar Terminus,13.03467,80.23001
+8304,Okkiam Thoraipakkam,12.93788,80.24202
+5748,Egmore Railway Station - South,13.07788,80.26215
+5772,Mugalivakkam,13.02944,80.16838
+1465,Guindy Railway Station,13.00824,80.21334
+5639,Santhome Church,13.03289,80.27755
+1462,Guindy M K N Salai,13.00726,80.20972
+5776,Iyappanthangal,13.03716,80.13870
+8847,Guru Nanak College,12.99080,80.22025
+8913,Alandur,12.99589,80.18865
+8953,Besant Nagar Terminus,13.00033,80.26607
+9343,Ashok Nagar Canara Bank,13.04019,80.21257
+9453,Ice House Police Station,13.05281,80.27371
+11192,Annasquare,13.06658,80.28412
+9291,Perumal Kovil,13.03559,80.23679
+5751,Adyar Gandhi Nagar,13.00682,80.24946
+10934,K B Dasan Shelter-1,13.03519,80.25059
+154,Thousand Light Or Us Embassy,13.05361,80.25297
+1048,Concorde Or Chellammal College,13.01186,80.22195
+26,Ashok Pillar,13.03354,80.21209
+5627,Saidapet Veterinary Hospital Or Raja Hostel,13.02543,80.22968
+6592,Irumbuliyur,12.91653,80.10583
+9991,Kilambakkam Bus Terminus,12.87351,80.07858
+5908,Thiruvanmiyur Bus Stand,12.98695,80.25929
+189,Manthoppu Hr Sec School,13.02506,80.21976
+10049,S.I.V.E.T,12.92076,80.16794
+9966,It Park Siruseri Or Muttukadu,12.83266,80.22916
+10232,Chembarambakkam Kovil,13.04321,80.06300
+6807,Mettupalayam Pearmbur,13.10492,80.25312
+60,Kaveri Nager,13.02832,80.22721
+11149,Thiruvanmiyur Ration Shop,12.98631,80.25572
+6269,Egattur,12.83674,80.22850
+6225,Vaniyanchavadi Padma Adarsh School,12.82621,80.23141
+5765,City Centre Or Kalyani Hospital,13.04385,80.27225
+5827,Taj Hotel Or Uthamar Gandhi Salai,13.05945,80.24775
+5622,Motcham Aysha Hospital Or Motcham Theatre,13.08488,80.25017
+5718,M.O.P Vaishnava College,13.05538,80.24921
+11158,Royapuram terminus,13.10212,80.29424
+11159,Island ground Terminus,13.07826,80.28144
+5621,Medavakkam Kellys,13.08849,80.24192
+5762,Madhya Kailash,13.00658,80.24593
+6561,Bharathi Vidyalaya,12.90747,80.20192
+8618,Sriperumbudur Mgr Nagar,12.97246,79.95332
+9202,Queensland,13.02831,80.03012
+9277,Burkit Road,13.03504,80.23090
+5558,Taj Hotel Or Uthamar Gandhi Salai,13.06069,80.24747
+9974,Navalur,12.84471,80.22680
+5586,Cit Colony,13.03876,80.25762
+5536,Thangal Tollgate,13.14434,80.29694
+25,Ashok Pillar,13.03513,80.21088
+23,Aranganathan Subway,13.02898,80.22411
+44,Double Tank,13.03857,80.20150
+42,Dms,13.04699,80.24861
+43,Dms,13.04698,80.24831
+9269,Gopala Krishna Theatre,13.03392,80.16039
+90,Nagathamman Koil,13.04410,80.20896
+94,Nesapakkam,13.03811,80.19284
+91,Nandanam Metro,13.03166,80.24114
+122,Shanthi Theatre,13.06723,80.27048
+124,Simpson,13.07111,80.27401
+121,Shanthi Theatre,13.06775,80.26893
+130,Srinivasa Theater,13.03112,80.22361
+88,Mylapore Tank,13.03400,80.26794
+98,Padma Shri School,13.03886,80.19953
+243,Adyar Gate,13.02909,80.24935
+5552,Viveks And Company,13.04725,80.23308
+7,Saidapet West Bus Stand,13.02425,80.21269
+4,K.K.Nagar,13.03586,80.20545
+27,Ayappan Kovil,13.03924,80.19715
+28,Central Dental College,13.08299,80.28199
+53,High Court,13.08502,80.28344
+62,Liberty,13.05398,80.22730
+55,Hotel Everest,13.08070,80.26777
+58,Kannammapettai Burial Ground,13.03041,80.22819
+73,Mahalingapuram,13.05399,80.23277
+85,Munusamy Salai,13.03884,80.19293
+104,Periyar Salai,13.05321,80.23732
+102,Park Station,13.08135,80.27311
+152,Teynampet Metro,13.03710,80.24662
+115,Ram Theatre,13.05150,80.21709
+112,Pt Rajan Road,13.03928,80.20495
+6132,Chettinad Hospital,12.79608,80.22296
+22,Anand Theatre,13.05641,80.25719
+6150,Hindustan College,12.80115,80.22360
+6157,Padur,12.80533,80.22410
+5441,Kamarajar Avenue 2nd Street,13.00123,80.25658
+6179,Akshaya Padur,12.81095,80.22808
+502,Anna University,13.00829,80.23346
+495,Anna Square Bus Terminus one,13.06653,80.28438
+30,Cit Nagar,13.02926,80.23079
+31,Cit Nagar,13.02989,80.23086
+6198,Kazhipattur,12.81899,80.23052
+66,Lic,13.06298,80.26387
+65,Lic,13.06468,80.26634
+67,Luz Corner,13.03866,80.26756
+41,Data Udupi Hotel,13.03685,80.19854
+6,Mandaveli Bus Terminus,13.02695,80.26056
+155,Anand Theatre Or Thousand Light,13.05742,80.25725
+5,Mandaveli Bus Terminus,13.02661,80.26574
+63,Liberty,13.05382,80.22725
+71,M G R Nagar Market,13.03632,80.20159
+70,M G R Nagar,13.03728,80.19597
+79,Mettupalayam,13.03225,80.22005
+150,Payaigada Evening Bazar,13.08555,80.28017
+144,Velankanni Matric Higher Secondary School,13.03876,80.20843
+137,Trustpuram,13.05284,80.22151
+142,Vanavil,13.04075,80.24705
+120,Saamiyar Madam,13.04685,80.21888
+129,Spencer Plaza,13.06091,80.26127
+10814,Music College Annamalai Puram,13.01889,80.26312
+97,Nurse Quarters,13.08219,80.27864
+149,Nandanam Ymca,13.02885,80.23664
+10815,Jayanthi Theatre,12.98768,80.25624
+110,Power House Kodambakkam,13.05246,80.22025
+111,Power House Kodambakkam,13.05186,80.22025
+156,Vetnary Hospital,13.05255,80.24016
+128,Spencer Plaza TVS,13.05949,80.25992
+141,Vanavil,13.04149,80.24742
+21,Amudam,13.03979,80.19330
+778,Bells Road,13.06411,80.27830
+5566,Yellow Pages,13.04444,80.26848
+6314,Ags Complex Navalur,12.85016,80.22672
+5575,New Woodlands,13.04466,80.26301
+5581,Vmc Street,13.04444,80.26682
+5582,Avm Rajeshwari Thirumana Mandapam,13.04453,80.26526
+5583,Narada Gana Sabha,13.04101,80.25853
+5585,Anjaneyar Temple,13.03874,80.25897
+5584,Cit Colony,13.03924,80.25750
+5587,F.C.I Old,13.03814,80.25589
+5588,Aalayamman Temple,13.03969,80.24455
+5593,Vadapalani Kovil,13.05020,80.21352
+5595,Panagal Park,13.04214,80.23311
+5596,Holy Angels School,13.04031,80.24154
+5598,Aalayamman Temple,13.03956,80.24556
+5599,S.I.E.T College,13.03556,80.24794
+5600,F.C.I Old,13.03821,80.25573
+5594,Bharathi Nagar,13.05010,80.23374
+5601,Isabella Hospital,13.03938,80.26171
+5602,Vivekananda College,13.03974,80.26416
+5607,Tamil Nadu Open University Or Panagal Maligai,13.02114,80.22568
+5619,Shenoy Nagar Or Pulla Avenue,13.07686,80.22505
+5620,Medavakkam Mental Hospital,13.09119,80.24095
+5623,Purasaivakkam Tank,13.08365,80.25460
+5624,Alagappa Schools,13.08272,80.25448
+1091,D1 Police Station,13.06795,80.27242
+5629,Pudupet,13.07021,80.26607
+5637,D.G.P Office,13.04307,80.27975
+5638,All India Radio Light House,13.03916,80.27894
+5641,Kuil Thoppu,13.02996,80.27689
+5640,Employment Office,13.03102,80.27728
+5651,Stella Marys College,13.04747,80.25419
+5652,Semmozhi Poonga,13.05061,80.25229
+5659,Alagappa Schools,13.08182,80.25413
+5661,Abirami Theatre,13.08570,80.24658
+5662,Medavakkam Kellys,13.08829,80.24196
+5663,Medavakkam Mental Hospital,13.09052,80.24076
+6403,Satyabhama University,12.87195,80.22683
+5664,Sayani Theatre Aynavaram,13.09765,80.23974
+5667,Railway Quarters,13.09987,80.22523
+5672,Kalpana Hotel,13.10313,80.20766
+5671,Kallukkadai,13.10207,80.21085
+5670,Icf Annexe,13.10147,80.21251
+5681,Kannagi Statue Or Presidency College,13.05763,80.28154
+5687,Iit Madras Or Guindy National Park,13.00680,80.24097
+5691,Iit Madras Or Guindy National Park,13.00682,80.24000
+6420,Kumaran Nagar,12.87794,80.22698
+5708,Chinthamani,13.08460,80.22451
+5711,Chetpet,13.07034,80.24207
+5712,M.O.P Vaishnava College,13.05499,80.24956
+5719,Chetpet,13.06985,80.24209
+6435,Vandalur Zoo,12.88092,80.08058
+5735,E.S.I Hospital Ayanavaram,13.09481,80.24121
+1337,Gandhi Mandapam,13.00762,80.24035
+5754,Dasaprakash Hotel Or Petrol Pump,13.07981,80.25462
+5757,Dasaprakash Hotel Or Petrol Pump,13.07963,80.25457
+5758,M.G.R Janaki College Or Sathya Studio,13.01603,80.25967
+5761,Adyar Gandhi Nagar,13.00668,80.24984
+5766,Maduvankarai,13.00459,80.21229
+5767,Butt Road,13.00729,80.19710
+5768,Military Quarters,13.01086,80.19562
+5769,Nandambakkam,13.01671,80.18920
+5770,Miot Hospital,13.02061,80.18442
+5771,D.L.F.,13.02365,80.17875
+5773,Porur Shakthi Nagar,13.03144,80.16484
+5774,Porur,13.03525,80.15470
+5775,Ramachandra Hospital,13.03659,80.14306
+6454,Ponniamman Kovil,12.88575,80.22701
+5778,Kattupakkam,13.04085,80.12787
+5783,Chola Hotel Or Music Academy,13.04586,80.25699
+5784,Saidapet Metro,13.02377,80.22820
+5792,Aminjikarai,13.07399,80.22576
+5791,Thadandar Nagar,13.02443,80.22841
+5788,Little Mount,13.01559,80.22506
+1428,Gosha,13.06096,80.27779
+1461,Guindy Bus Terminus,13.00928,80.21128
+5814,Secretariat,13.08002,80.28824
+5817,Villivakkam Bus Stand,13.10543,80.20801
+5825,Eldams Road,13.03881,80.25155
+6529,Hcl Company,12.90161,80.21825
+5830,Anna University,13.00742,80.23668
+6546,Global Hospital,12.90534,80.20802
+5860,Kathipara,13.00738,80.20165
+5861,Senneerkuppam Electronic Board House,13.05244,80.11271
+5862,Senneerkuppam,13.05639,80.11386
+5863,Varadaraja Puram,13.04890,80.08662
+5864,Nazarathpet,13.04719,80.08043
+6554,Perungalattur,12.90648,80.09617
+1722,Kalaivanar Arangam,13.06620,80.27548
+6563,Perumbakkam,12.90766,80.19887
+5890,Karayanchavadi,13.04717,80.11188
+1740,Kaliyappa Hospital,13.02721,80.25457
+5891,Parivakkam Signal,13.05649,80.09767
+6571,Pallavan Nagar,12.91088,80.19619
+6579,Karapakkam,12.91327,80.22938
+6614,Vijaya Nagaram,12.91877,80.17888
+6622,Kcg College,12.91965,80.23025
+6623,Medavakkam,12.91969,80.18178
+6625,Santhosapuram,12.91972,80.17127
+6644,Mahalakshmi Nagar,12.92258,80.14738
+6651,East Tambaram Convent,12.92273,80.13106
+6659,Sembakkam,12.92316,80.16029
+6686,Okkiyampet,12.92585,80.23108
+5911,Bsnl Telephone Exchange,13.00077,80.25630
+76,Mandaveli Market,13.02901,80.26638
+5914,Jayanthi Theatre,12.98892,80.25602
+6712,Kadaperi,12.93310,80.12405
+5918,Kannagi Statue Or Presidency College,13.05528,80.28166
+2145,Kotturpuram,13.02311,80.24263
+2142,Kottur,13.01752,80.24088
+5926,Iyyappanthangal Bus Depot,13.03812,80.13487
+9065,Thandalam,13.01518,80.00410
+5932,War Memorial,13.07423,80.28620
+138,Trustpuram,13.05265,80.22157
+6693,Tambaram West Bus Stand,12.92772,80.11864
+2414,Madras University,13.06542,80.28363
+2413,Madras University,13.06537,80.28383
+5922,Vivekananda House,13.05100,80.28082
+5916,Vivekananda House,13.05038,80.28085
+2533,Mandaveli Railway Station,13.02713,80.25986
+5865,Jaya Jaya Sankara International School,13.04651,80.07427
+5560,M.G.R Salai Nungambakkam Or Palm Grove,13.05319,80.24806
+2601,Marina Beach,13.06130,80.28289
+2602,Marina Beach,13.06142,80.28278
+5721,E.S.I Hospital Ayanavaram,13.09477,80.24139
+8323,Mettukuppam,12.93923,80.23561
+7508,Thiruvottiyur Market,13.16406,80.30334
+8361,Infoview Thoraipakkam,12.94373,80.23753
+9889,Dasa Mahan,13.09769,80.25466
+8365,Tambaram Tb Hospital,12.94410,80.13450
+10941,Kannagi Statue Shelter 1,13.05531,80.28163
+2820,Mmda Colony Road Junction,13.06518,80.21125
+8379,D B Jain College,12.94696,80.23995
+8386,Chromepet Mit Gate,12.94800,80.13741
+8421,Chromepet,12.95152,80.14011
+8425,Seevaram,12.95165,80.24178
+3016,Nandanam Park,13.02758,80.24485
+8464,Saravana Store Chromepet,12.95692,80.14326
+8481,Perungudi,12.95948,80.24487
+8542,Kandanchavadi,12.96532,80.24755
+8574,Sriperumbudur Theradi,12.96861,79.95088
+8575,Pallavaram,12.96869,80.14957
+8577,Pallavaram Bus Stand,12.96698,80.14872
+6662,Tambaram East Bus Stop,12.92319,80.12067
+8624,I G P,12.97274,80.25031
+10980,Adyar Signal Bus Stop,13.00670,80.25686
+8657,Beeman Thanhal,12.97617,79.95883
+8660,Velachery,12.97617,80.22124
+10984,Anna Nagar 1st Avenue,13.09085,80.22365
+8689,Tansi Nagar,12.97853,80.22521
+8693,Srp Tools,12.97862,80.25254
+7531,Vellayan Chettiyar School,13.16801,80.30416
+5642,Poonamallee Municipality Or Kumananchavadi,13.04480,80.11589
+5822,M.G.R.Koyambedu Bus Terminus,13.06880,80.20520
+8711,Srp Tools,12.98030,80.25155
+5790,Saidapet,13.02239,80.22644
+8728,Pillaiyar Kovil,12.98140,80.23858
+8729,Thirusoolam National Airport,12.98136,80.16563
+52,Flower Bazzar,13.08752,80.28142
+5650,Panagal Maligai Or Saiadapet Bridge,13.01913,80.22435
+8736,Baby Nagar,12.98173,80.23043
+8735,Sriperumbudur Toll Gate,12.98168,79.96873
+8734,Bharathi Nagar,12.98171,80.23349
+99,Pallavan Salai,13.07561,80.27621
+8769,Pennalur Eb Office,12.98494,79.97569
+8777,Dhandeeswaran Nagar,12.98541,80.22331
+8804,Tidel Park,12.98741,80.25157
+8808,Meeanambakkam Metro,12.98746,80.17596
+10230,Brindavan Street,13.04209,80.22506
+8813,Gandhi Road,12.98771,80.22308
+8820,Tidel Park,12.98810,80.25238
+6759,Icf,13.10016,80.21438
+6779,Binny Mill Canteen,13.10259,80.25272
+6783,Binny Mill Canteen,13.10277,80.25263
+6810,Mettupalayam Pearmbur,13.10518,80.25292
+6820,Jamalaya,13.10633,80.24939
+6822,Jamalaya,13.10629,80.25041
+6830,Perambur Railway Station,13.10802,80.24470
+6833,Perambur Railway Station,13.10835,80.24464
+10318,Motcham Theatre Or Grt,13.08601,80.25003
+4849,Triplicane,13.05821,80.27777
+4942,Vadapalani Bus Stand,13.04919,80.20705
+7378,Thangal,13.14796,80.29819
+7403,Raja Kaladi,13.15139,80.29953
+7424,Thiruvottiyur Police Station,13.15387,80.30037
+7450,Ellaiamman Kovil,13.15749,80.30152
+7480,Theradi,13.16065,80.30246
+8898,Irungattukottai,12.99523,79.98885
+8918,Rbi Quarters,12.99606,80.26495
+8922,Besant Nagar,12.99622,80.26764
+8923,Vannandurai,12.99636,80.26238
+9240,Kk Nagar Telephone Exchange Jaffarkhanpet,13.03165,80.20930
+8924,Shasthri Nagar,12.99660,80.25927
+8937,Vellacherry Check Post,12.99721,80.21659
+8967,Asarkana Omni Bus Stop,13.00213,80.20012
+8964,St Thomas Mount Head Post Office,13.00185,80.19613
+8978,Irungattukottai Sipcot,13.00384,79.99370
+8988,Kannigapuram,13.00511,80.22041
+9021,Halda,13.01050,80.22285
+9046,Bsnl Office,13.01294,80.20804
+9059,Cipet,13.01471,80.20444
+9085,Thandalam Koot Road,13.01814,80.01041
+9128,Mrc Nagar,13.02108,80.27014
+9147,Saveetha Medical College,13.02197,80.01650
+9187,Munipillai Chathiram,13.02601,80.23143
+9176,Kalaimagal Nagar,13.02456,80.20703
+9209,Kasi Theatre,13.02920,80.20888
+9210,Kasi Theatre,13.02930,80.20876
+9226,Intercity Bus Stop,13.03133,80.21571
+9236,Kk Nagar Telephone Exchange Jaffarkhanpet,13.03161,80.20959
+9274,Ram Colony,13.03423,80.21618
+9295,Irulapalayam Road Junction,13.03596,80.04409
+9326,Jai Garden,13.03879,80.16873
+9328,L And T,13.03881,80.05316
+9347,Chembarambakkam,13.04065,80.05755
+9348,Indian Bank Gowda Road,13.04071,80.22155
+9354,Anjugam School,13.04130,80.22169
+9359,Kesavardhini,13.04189,80.17795
+9351,Valasaravakkam,13.04104,80.17370
+9385,Nazarathpet Police Check Post,13.04499,80.06867
+9371,Porur Toll Plaza,13.04348,80.14971
+9393,Virugambakkam,13.04645,80.19011
+9396,Panimalar College,13.04687,80.07565
+9398,Vadapalani,13.04703,80.21218
+9422,Lady Willingdon College Of Education,13.04854,80.28045
+9460,Royapettah Hospital,13.05392,80.26425
+9464,New College,13.05407,80.26108
+9466,New College,13.05421,80.26155
+9491,Income Tax Office,13.05737,80.24865
+9534,Sterling Road,13.06310,80.24437
+9576,Chitra Theatre,13.06896,80.26748
+9609,Commissioner Office,13.07370,80.26172
+9626,Aminjikarai Market,13.07506,80.23092
+9640,Albert Theatre,13.07534,80.26396
+9642,Taylors Road,13.07659,80.23737
+9659,Kmc Hospital,13.07797,80.24412
+9681,Thinathanthi,13.08032,80.26363
+9675,Y W C A,13.07939,80.25946
+9761,Purasaivakkam Tank,13.08597,80.25038
+9765,Doveton,13.08644,80.25687
+9782,High Court,13.08865,80.28711
+9783,Parrys Corner,13.08870,80.29043
+9805,Parrys Corner,13.09077,80.29099
+9834,Saravana Theatre,13.09384,80.25085
+9843,Beach Station,13.09453,80.29224
+9845,Vasantham Colony,13.09470,80.20621
+9849,Ambattur Police Station,13.09513,80.16364
+9883,Pattalam,13.09746,80.25797
+9895,Otteri,13.09791,80.25187
+9904,Ayanavaram Depot,13.09846,80.24225
+10012,Government School Shozhinganallur,12.89349,80.22769
+10030,Shozhinganallur,12.90311,80.22820
+10022,Shozhinganallur,12.89887,80.22801
+10031,Dollar Or Accenture,12.90631,80.22839
+10073,Kumaran Kudil,12.94008,80.24011
+10070,Okk.Thoraipakm Sec.Colony,12.93775,80.24439
+10066,Ptc Quarters Or Mootakaran Chavadi,12.93421,80.23324
+10124,Pallavaram Or English Electrical,12.97338,80.15303
+10133,Tharamani Or Irtc Junction,12.98143,80.24270
+10155,Adyar (Depot),12.99697,80.25696
+10165,Alandur Metro,13.00375,80.20073
+10166,Alandur Metro,13.00421,80.20129
+10161,Guindy Padavettamman Kovil,12.99957,80.21442
+10185,Ekkattuthangal Or Ambal Nagar,13.01731,80.20545
+10190,Ekkattuthangal Or Ambal Nagar,13.01874,80.20623
+10194,Muthu School,13.02467,80.21684
+10196,Saidapet Veterinary Hospital Or Raja Hostel,13.02515,80.22976
+10225,Duraiswamy Subway Or Pothys,13.04071,80.23098
+10235,Alwar Thirunagar,13.04428,80.18492
+10249,N.K.T Girls High School,13.05242,80.27501
+10253,Thousand Light Or U S Embassy,13.05366,80.25268
+10298,Egmore Railway Station - North,13.07951,80.26285
+10326,Bhuvaneshwari Theatre Or Vasanthi Theatre,13.09082,80.25875
+10332,M Block Anna Nagar Or K4 Police Station,13.09224,80.22041
+10335,Labour Office,13.09261,80.20991
+10357,Ambattur I.T Park,13.09509,80.17000
+10387,Mangalapuram - Near Perambur,13.10722,80.24649
+10389,Mangalapuram - Near Perambur,13.10735,80.24641
+10539,Thiruvottiyur Ajax Bus Depot,13.17214,80.30505

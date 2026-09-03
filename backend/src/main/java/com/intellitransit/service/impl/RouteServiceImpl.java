@@ -63,7 +63,17 @@ public class RouteServiceImpl implements RouteService {
     @Override
     @Transactional(readOnly = true)
     public List<RouteDTO> getAllRoutes() {
-        return routeRepository.findAll().stream().map(this::mapToRouteDTO).collect(Collectors.toList());
+        return routeRepository.findAll().stream()
+                .sorted((r1, r2) -> {
+                    boolean isDemo1 = r1.getRouteNumber() != null && r1.getRouteNumber().startsWith("DEMO-");
+                    boolean isDemo2 = r2.getRouteNumber() != null && r2.getRouteNumber().startsWith("DEMO-");
+                    if (isDemo1 != isDemo2) {
+                        return isDemo1 ? 1 : -1;
+                    }
+                    return r1.getId().compareTo(r2.getId());
+                })
+                .map(this::mapToRouteDTO)
+                .collect(Collectors.toList());
     }
 
     @Override

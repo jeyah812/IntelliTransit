@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 public class TripDTO {
 
     private Long id;
+    private String gtfsTripId;
     private Long routeId;
     private String routeNumber;
     private String routeName;
@@ -21,8 +22,9 @@ public class TripDTO {
 
     public TripDTO() {}
 
-    public TripDTO(Long id, Long routeId, String routeNumber, String routeName, Long busId, String busNumber, Long driverId, String driverName, LocalDateTime scheduledStart, LocalDateTime scheduledEnd, LocalDateTime actualStart, LocalDateTime actualEnd, TripStatus status) {
+    public TripDTO(Long id, String gtfsTripId, Long routeId, String routeNumber, String routeName, Long busId, String busNumber, Long driverId, String driverName, LocalDateTime scheduledStart, LocalDateTime scheduledEnd, LocalDateTime actualStart, LocalDateTime actualEnd, TripStatus status) {
         this.id = id;
+        this.gtfsTripId = gtfsTripId;
         this.routeId = routeId;
         this.routeNumber = routeNumber;
         this.routeName = routeName;
@@ -37,12 +39,19 @@ public class TripDTO {
         this.status = status;
     }
 
+    public TripDTO(Long id, Long routeId, String routeNumber, String routeName, Long busId, String busNumber, Long driverId, String driverName, LocalDateTime scheduledStart, LocalDateTime scheduledEnd, LocalDateTime actualStart, LocalDateTime actualEnd, TripStatus status) {
+        this(id, null, routeId, routeNumber, routeName, busId, busNumber, driverId, driverName, scheduledStart, scheduledEnd, actualStart, actualEnd, status);
+    }
+
     public static TripDTOBuilder builder() {
         return new TripDTOBuilder();
     }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getGtfsTripId() { return gtfsTripId; }
+    public void setGtfsTripId(String gtfsTripId) { this.gtfsTripId = gtfsTripId; }
 
     public Long getRouteId() { return routeId; }
     public void setRouteId(Long routeId) { this.routeId = routeId; }
@@ -82,6 +91,7 @@ public class TripDTO {
 
     public static class TripDTOBuilder {
         private Long id;
+        private String gtfsTripId;
         private Long routeId;
         private String routeNumber;
         private String routeName;
@@ -96,6 +106,7 @@ public class TripDTO {
         private TripStatus status;
 
         public TripDTOBuilder id(Long id) { this.id = id; return this; }
+        public TripDTOBuilder gtfsTripId(String gtfsTripId) { this.gtfsTripId = gtfsTripId; return this; }
         public TripDTOBuilder routeId(Long routeId) { this.routeId = routeId; return this; }
         public TripDTOBuilder routeNumber(String routeNumber) { this.routeNumber = routeNumber; return this; }
         public TripDTOBuilder routeName(String routeName) { this.routeName = routeName; return this; }
@@ -110,7 +121,7 @@ public class TripDTO {
         public TripDTOBuilder status(TripStatus status) { this.status = status; return this; }
 
         public TripDTO build() {
-            return new TripDTO(id, routeId, routeNumber, routeName, busId, busNumber, driverId, driverName, scheduledStart, scheduledEnd, actualStart, actualEnd, status);
+            return new TripDTO(id, gtfsTripId, routeId, routeNumber, routeName, busId, busNumber, driverId, driverName, scheduledStart, scheduledEnd, actualStart, actualEnd, status);
         }
     }
 }

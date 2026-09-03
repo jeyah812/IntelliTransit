@@ -1,0 +1,24 @@
+route_id,route_short_name,route_long_name,route_type,agency_id
+11791,549,Thiruvanmiyur TO Sriperumbudur,3,69
+17233,70,Tambaram West TO Vadapalani,3,69
+3503,95X,Thiruvanmiyur Bus Stand TO Tambaram East Bus Stop,3,69
+16604,26,Vadapalani TO Iyyappanthangal,3,69
+24006,570,M.G.R.Koyambedu TO Kelambakkam,3,69
+11533,500W,Tambaram West TO Saidapet West,3,69
+24065,3,Thiyagaraya Nagar TO Thiruvanmiyur,3,69
+11102,29A,Perambur B.T TO Anna Square,3,69
+24079,102,Island ground Terminus TO Kelambakkam,3,69
+11414,47A,Ayanavaram B.T TO Villivakkam,3,69
+19750,12G,Lady Willingdon College Of Education TO K K Nagar,3,69
+20126,23C,Ayanavaram B.T TO Besant Nagar,3,69
+16573,25,Anna Square TO Vadapalani,3,69
+20534,21G,Kilambakkam B.S TO Mandaveli,3,69
+16168,20,Ayanavaram TO Villivakkam,3,69
+15101,29C,Mandaveli TO Perambur B.T,3,69
+10715,19C,Adyar B.T TO Okk.Thoraipakm Sec.Colony,3,69
+16846,104,Ambattur I.E TO Tambaram West,3,69
+15926,45B,Alandur (Depot) TO Guindy Tvk Estate,3,69
+13720,12B,Vadapalani TO Foreshore Estate,3,69
+22202,20A,Island TO Villivakkam,3,69
+22283,11 R,Thiyagarayanagar TO Royapuram,3,69
+22924,24A,Anna Nagar West TO Vivekananda House,3,69

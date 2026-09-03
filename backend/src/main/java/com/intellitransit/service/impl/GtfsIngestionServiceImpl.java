@@ -191,32 +191,35 @@ public class GtfsIngestionServiceImpl implements GtfsIngestionService {
                 // Unique routeNumber disambiguation per feedId and feedVersion
                 String candidateRouteNumber = displayShortName;
                 Optional<Route> existingRoute = routeRepository.findByGtfsRouteIdAndFeedIdAndFeedVersion(routeId, feedId, feedVersion);
-                if (existingRoute.isEmpty()) {
-                    Optional<Route> collision = routeRepository.findByRouteNumber(candidateRouteNumber);
-                    if (collision.isPresent()) {
-                        candidateRouteNumber = displayShortName + "-" + feedId + "-" + routeId;
-                    }
-                }
-
                 Route route;
                 if (existingRoute.isPresent()) {
                     route = existingRoute.get();
                 } else {
-                    Route newRoute = Route.builder()
-                            .gtfsRouteId(routeId)
-                            .feedId(feedId)
-                            .feedVersion(feedVersion)
-                            .routeNumber(candidateRouteNumber)
-                            .routeName(displayLongName)
-                            .origin("Origin Stop")
-                            .destination("Destination Stop")
-                            .distanceKm(BigDecimal.ZERO)
-                            .estimatedDurationMinutes(30)
-                            .active(true)
-                            .createdAt(importTime)
-                            .build();
-                    route = txTemplate.execute(status -> routeRepository.save(newRoute));
-                    routesImported++;
+                    Optional<Route> collision = routeRepository.findByRouteNumber(candidateRouteNumber);
+                    if (collision.isPresent()) {
+                        Route cRoute = collision.get();
+                        cRoute.setGtfsRouteId(routeId);
+                        cRoute.setFeedId(feedId);
+                        cRoute.setFeedVersion(feedVersion);
+                        cRoute.setRouteName(displayLongName);
+                        route = txTemplate.execute(status -> routeRepository.save(cRoute));
+                    } else {
+                        Route newRoute = Route.builder()
+                                .gtfsRouteId(routeId)
+                                .feedId(feedId)
+                                .feedVersion(feedVersion)
+                                .routeNumber(candidateRouteNumber)
+                                .routeName(displayLongName)
+                                .origin("Origin Stop")
+                                .destination("Destination Stop")
+                                .distanceKm(BigDecimal.ZERO)
+                                .estimatedDurationMinutes(30)
+                                .active(true)
+                                .createdAt(importTime)
+                                .build();
+                        route = txTemplate.execute(status -> routeRepository.save(newRoute));
+                        routesImported++;
+                    }
                 }
 
                 gtfsRouteMap.put(routeId, route);

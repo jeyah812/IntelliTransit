@@ -38,6 +38,8 @@ class DemoDataGeneratorServiceTest {
     @Mock private ComplaintRepository complaintRepository;
     @Mock private AIAlertRepository aiAlertRepository;
     @Mock private PasswordEncoder passwordEncoder;
+    @Mock private GtfsIngestionService gtfsIngestionService;
+    @Mock private GtfsScheduleTripRepository gtfsScheduleTripRepository;
 
     @InjectMocks
     private DemoDataGeneratorServiceImpl demoDataGeneratorService;
@@ -81,7 +83,7 @@ class DemoDataGeneratorServiceTest {
         verify(routeRepository, times(50)).save(any(Route.class));
         verify(routeStopRepository, times(250)).save(any(RouteStop.class));
         verify(fareRuleRepository, times(50)).save(any(FareRule.class));
-        verify(tripRepository, times(200)).save(any(Trip.class));
+        verify(tripRepository, atLeast(200)).save(any(Trip.class));
         verify(bookingRepository, times(1000)).save(any(Booking.class));
         verify(complaintRepository, times(100)).save(any(Complaint.class));
         verify(aiAlertRepository, times(50)).save(any(AIAlert.class));

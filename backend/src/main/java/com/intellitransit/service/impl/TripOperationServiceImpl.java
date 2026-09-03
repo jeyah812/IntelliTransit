@@ -246,6 +246,7 @@ public class TripOperationServiceImpl implements TripOperationService {
     private TripDTO mapToTripDTO(Trip trip) {
         return TripDTO.builder()
                 .id(trip.getId())
+                .gtfsTripId(trip.getGtfsTripId())
                 .routeId(trip.getRoute().getId())
                 .routeNumber(trip.getRoute().getRouteNumber())
                 .routeName(trip.getRoute().getRouteName())

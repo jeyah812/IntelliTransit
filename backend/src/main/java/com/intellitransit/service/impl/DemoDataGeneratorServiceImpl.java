@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class DemoDataGeneratorServiceImpl implements DemoDataGeneratorService {
@@ -34,6 +35,8 @@ public class DemoDataGeneratorServiceImpl implements DemoDataGeneratorService {
     private final ComplaintRepository complaintRepository;
     private final AIAlertRepository aiAlertRepository;
     private final PasswordEncoder passwordEncoder;
+    private final com.intellitransit.service.GtfsIngestionService gtfsIngestionService;
+    private final GtfsScheduleTripRepository gtfsScheduleTripRepository;
 
     public DemoDataGeneratorServiceImpl(RouteRepository routeRepository,
                                          StopRepository stopRepository,
@@ -48,7 +51,9 @@ public class DemoDataGeneratorServiceImpl implements DemoDataGeneratorService {
                                          BookingRepository bookingRepository,
                                          ComplaintRepository complaintRepository,
                                          AIAlertRepository aiAlertRepository,
-                                         PasswordEncoder passwordEncoder) {
+                                         PasswordEncoder passwordEncoder,
+                                         com.intellitransit.service.GtfsIngestionService gtfsIngestionService,
+                                         GtfsScheduleTripRepository gtfsScheduleTripRepository) {
         this.routeRepository = routeRepository;
         this.stopRepository = stopRepository;
         this.routeStopRepository = routeStopRepository;
@@ -63,12 +68,32 @@ public class DemoDataGeneratorServiceImpl implements DemoDataGeneratorService {
         this.complaintRepository = complaintRepository;
         this.aiAlertRepository = aiAlertRepository;
         this.passwordEncoder = passwordEncoder;
+        this.gtfsIngestionService = gtfsIngestionService;
+        this.gtfsScheduleTripRepository = gtfsScheduleTripRepository;
     }
 
     @Override
     @Transactional
     public DemoDataResponse generateDemoData() {
         LocalDateTime now = LocalDateTime.now();
+
+        // 0. Ingest Real GTFS Routes if GTFS dataset is present and not yet imported
+        try {
+            boolean hasMtcRoutes = routeRepository.findAll().stream()
+                    .anyMatch(r -> "MTC".equals(r.getFeedId()) && r.getRouteNumber() != null && !r.getRouteNumber().startsWith("DEMO-") && !"R101".equals(r.getRouteNumber()));
+
+            if (gtfsIngestionService != null) {
+                java.io.File gtfsDir = new java.io.File("src/main/resources/gtfs/mtc");
+                if (!gtfsDir.exists()) gtfsDir = new java.io.File("backend/src/main/resources/gtfs/mtc");
+                if (!gtfsDir.exists()) gtfsDir = new java.io.File("C:/Users/Harshini Darshan/.gemini/antigravity/brain/37e99e5b-8261-4fbb-b9e8-4b3b52897a2d/scratch/ChennaiGTFS/ChennaiGTFS-main/data/mtc");
+
+                if (gtfsDir.exists()) {
+                    gtfsIngestionService.importGtfsFeed(new com.intellitransit.dto.GtfsImportRequest(gtfsDir.getAbsolutePath(), false, "MTC", "2.0"));
+                }
+            }
+        } catch (Exception e) {
+            org.slf4j.LoggerFactory.getLogger(DemoDataGeneratorServiceImpl.class).warn("GTFS ingestion warning: " + e.getMessage());
+        }
 
         // 0. Ensure Fleet & Passengers exist
         List<Bus> buses = busRepository.findAll();
@@ -271,44 +296,75 @@ public class DemoDataGeneratorServiceImpl implements DemoDataGeneratorService {
             }
         }
 
-        // Ensure EVERY route has at least one active, future SCHEDULED bookable trip
+        // Ensure EVERY route (both real GTFS and DEMO routes) has at least 3 active, future SCHEDULED bookable trips
         List<Route> routesForTrips = routeRepository.findAll();
         if (routesForTrips.isEmpty()) {
             routesForTrips = generatedRoutes;
         }
+
         for (Route r : routesForTrips) {
             if (r.getId() != null) {
                 List<Trip> existingTrips = tripRepository.findByRouteId(r.getId());
-                boolean hasBookableScheduled = false;
-                for (Trip t : existingTrips) {
+
+                List<GtfsScheduleTrip> gtfsTrips = (gtfsScheduleTripRepository != null && r.getGtfsRouteId() != null)
+                        ? gtfsScheduleTripRepository.findByGtfsRouteId(r.getGtfsRouteId())
+                        : new ArrayList<>();
+
+                List<Trip> validFutureScheduledTrips = new ArrayList<>();
+                for (int idx = 0; idx < existingTrips.size(); idx++) {
+                    Trip t = existingTrips.get(idx);
                     if (t.getStatus() == TripStatus.SCHEDULED) {
-                        if (t.getScheduledStart() == null || t.getScheduledStart().isBefore(now)) {
-                            t.setScheduledStart(now.plusHours(2));
-                            t.setScheduledEnd(now.plusHours(2).plusMinutes(r.getEstimatedDurationMinutes() != null ? r.getEstimatedDurationMinutes() : 30));
-                            tripRepository.save(t);
+                        boolean isRealGtfsRoute = r.getRouteNumber() != null && !r.getRouteNumber().startsWith("DEMO-");
+                        if (isRealGtfsRoute && !gtfsTrips.isEmpty()) {
+                            if (t.getGtfsTripId() == null || t.getGtfsTripId().startsWith("DEMO-TRIP-") || t.getGtfsTripId().startsWith("TRIP-SCHED-")) {
+                                t.setGtfsTripId(gtfsTrips.get(idx % gtfsTrips.size()).getGtfsTripId());
+                            }
                         }
-                        hasBookableScheduled = true;
+                        if (t.getScheduledStart() == null || t.getScheduledStart().isBefore(now)) {
+                            // Update expired scheduled trips so they are in the future
+                            int hoursAhead = 1 + (validFutureScheduledTrips.size() * 2);
+                            t.setScheduledStart(now.plusHours(hoursAhead));
+                            t.setScheduledEnd(now.plusHours(hoursAhead).plusMinutes(r.getEstimatedDurationMinutes() != null && r.getEstimatedDurationMinutes() > 0 ? r.getEstimatedDurationMinutes() : 45));
+                        }
+                        tripRepository.save(t);
+                        validFutureScheduledTrips.add(t);
                     }
                 }
-                if (!hasBookableScheduled) {
-                    LocalDateTime schedStart = now.plusHours(1 + (int)(r.getId() % 6));
-                    LocalDateTime schedEnd = schedStart.plusMinutes(r.getEstimatedDurationMinutes() != null ? r.getEstimatedDurationMinutes() : 30);
-                    Bus b = !buses.isEmpty() ? buses.get(0) : null;
-                    Driver d = !drivers.isEmpty() ? drivers.get(0) : null;
 
-                    Trip futureTrip = Trip.builder()
-                            .gtfsTripId("DEMO-TRIP-SCHED-" + r.getId())
-                            .route(r)
-                            .bus(b)
-                            .driver(d)
-                            .scheduledStart(schedStart)
-                            .scheduledEnd(schedEnd)
-                            .actualStart(null)
-                            .actualEnd(null)
-                            .status(TripStatus.SCHEDULED)
-                            .build();
+                // Ensure at least 3 future SCHEDULED trips exist per route
+                int neededTrips = 3 - validFutureScheduledTrips.size();
+                if (neededTrips > 0) {
+                    for (int k = 0; k < neededTrips; k++) {
+                        int tripIndex = validFutureScheduledTrips.size() + k;
+                        int offsetHours = 1 + tripIndex * 2; // +1h, +3h, +5h
+                        LocalDateTime schedStart = now.plusHours(offsetHours);
+                        LocalDateTime schedEnd = schedStart.plusMinutes(r.getEstimatedDurationMinutes() != null && r.getEstimatedDurationMinutes() > 0 ? r.getEstimatedDurationMinutes() : 45);
 
-                    tripRepository.save(futureTrip);
+                        Bus b = !buses.isEmpty() ? buses.get((int) (Math.abs(r.getId() + tripIndex) % buses.size())) : null;
+                        Driver d = !drivers.isEmpty() ? drivers.get((int) (Math.abs(r.getId() + tripIndex) % drivers.size())) : null;
+
+                        String gtfsTripId = null;
+                        if (!gtfsTrips.isEmpty()) {
+                            gtfsTripId = gtfsTrips.get(tripIndex % gtfsTrips.size()).getGtfsTripId();
+                        }
+                        if (gtfsTripId == null || gtfsTripId.isEmpty()) {
+                            gtfsTripId = "TRIP-SCHED-" + r.getRouteNumber() + "-" + (tripIndex + 1);
+                        }
+
+                        Trip futureTrip = Trip.builder()
+                                .gtfsTripId(gtfsTripId)
+                                .route(r)
+                                .bus(b)
+                                .driver(d)
+                                .scheduledStart(schedStart)
+                                .scheduledEnd(schedEnd)
+                                .actualStart(null)
+                                .actualEnd(null)
+                                .status(TripStatus.SCHEDULED)
+                                .build();
+
+                        tripRepository.save(futureTrip);
+                    }
                 }
             }
         }
