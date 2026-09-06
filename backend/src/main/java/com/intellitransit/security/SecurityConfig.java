@@ -54,7 +54,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/index.html", "/manager.html", "/passenger.html", "/css/**", "/js/**", "/images/**", "/favicon.ico", "/assets/**").permitAll()
-                        .requestMatchers("/api/auth/**", "/h2-console/**", "/api/fares/calculate", "/api/routes/**", "/api/stops/**", "/api/tickets/*/qr-image", "/api/operations/simulation/**", "/api/operations/eta/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/h2-console/**", "/api/fares/calculate", "/api/routes/**", "/api/stops/**", "/api/tickets/*/qr-image", "/api/operations/simulation/**", "/api/operations/eta/**", "/api/operations/decision-support/**", "/api/operations/dispatch/history").permitAll()
                         .requestMatchers("/api/passenger/**").hasAnyRole("PASSENGER", "OPERATIONS_MANAGER")
                         .requestMatchers("/api/driver/**").hasAnyRole("DRIVER", "OPERATIONS_MANAGER")
                         .requestMatchers("/api/operations/**", "/api/manager/**", "/api/fleet/**", "/api/analytics/**", "/api/admin/**").hasRole("OPERATIONS_MANAGER")

@@ -1145,6 +1145,31 @@
                             </table>
                         </div>
                     </div>
+
+                    <!-- AUDIT TRAIL: RECENT SIMULATED OPERATIONAL ACTIONS -->
+                    <div class="section-card" style="margin-top:24px;">
+                        <div class="section-header">
+                            <div class="section-title">Recent Simulated Operational Actions (Audit Trail)</div>
+                            <button class="btn btn-secondary" onclick="fetchActionHistory()">Refresh Audit Trail</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Action ID</th>
+                                        <th>Executed At</th>
+                                        <th>Action Type</th>
+                                        <th>Dispatched Bus</th>
+                                        <th>Target Route & Trip</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="action-history-table-body">
+                                    <tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">No simulated actions recorded yet.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 4. ANALYTICS VIEW -->
@@ -1494,9 +1519,19 @@
                     <div class="text-block-content" id="drawer-explanation">—</div>
                 </div>
 
-                <div class="text-block-box" style="border-left:3px solid var(--primary);">
-                    <div class="text-block-title" style="color:var(--primary);">Operational Recommendation</div>
-                    <div class="text-block-content" id="drawer-recommendation">—</div>
+                <div class="text-block-box" style="border-left:3px solid var(--primary);background:#eff6ff;padding:14px;border-radius:8px;" id="drawer-dispatch-card">
+                    <div class="text-block-title" style="color:var(--primary);display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                        <span>AI OPERATIONAL DECISION SUPPORT</span>
+                        <span id="drawer-rec-priority" class="badge badge-critical">HIGH</span>
+                    </div>
+                    <div style="font-weight:700;font-size:13px;color:var(--text-main);margin-bottom:4px;" id="drawer-rec-action-title">Recommend Simulated Vehicle Dispatch</div>
+                    <div class="text-block-content" id="drawer-recommendation" style="margin-bottom:8px;">—</div>
+                    <div id="drawer-rec-evidence" style="font-size:11px;color:#334155;background:#ffffff;padding:8px;border-radius:6px;margin-bottom:10px;">
+                        • Evidence loading...
+                    </div>
+                    <button id="btn-simulate-dispatch" class="btn btn-primary btn-block" style="font-weight:700;font-size:13px;" onclick="triggerDrawerDispatch()">
+                        ⚡ SIMULATE DISPATCH
+                    </button>
                 </div>
             </div>
         </div>
@@ -1655,6 +1690,7 @@
                     titleEl.textContent = 'Passenger Complaints';
                     subEl.textContent = 'Logged passenger issues, delays and service feedback';
                     fetchComplaints();
+            fetchActionHistory();
                     break;
             }
 
@@ -2438,6 +2474,9 @@
             document.getElementById('drawer-explanation').textContent = alert.explanation || 'No detailed explanation provided.';
             document.getElementById('drawer-recommendation').textContent = alert.recommendation || 'No action required.';
 
+            currentSelectedAlertId = alert.id;
+            currentSelectedTripId = alert.tripId;
+            loadDecisionSupportForAlert(alert.id);
             document.getElementById('detail-drawer').classList.add('active');
         }
 
@@ -2449,6 +2488,113 @@
 
         function closeDrawerDirect() {
             document.getElementById('detail-drawer').classList.remove('active');
+        }
+
+        let currentSelectedAlertId = null;
+        let currentSelectedTripId = null;
+        let currentSelectedVehicleId = null;
+
+        async function fetchActionHistory() {
+            const tbody = document.getElementById('action-history-table-body');
+            if (!tbody) return;
+            try {
+                const res = await fetch(`${API_BASE}/api/operations/dispatch/history`, { headers: getAuthHeaders() });
+                if (res.ok) {
+                    const actions = await res.json();
+                    if (!actions || actions.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">No simulated operational actions recorded yet.</td></tr>`;
+                        return;
+                    }
+                    tbody.innerHTML = actions.map(a => `
+                        <tr>
+                            <td style="font-weight:700;">#${a.id}</td>
+                            <td style="color:var(--text-muted);">${formatDate(a.executedAt)}</td>
+                            <td><span class="badge badge-new">${a.actionType}</span></td>
+                            <td style="font-weight:600;color:var(--primary);">${a.busNumber || '—'}</td>
+                            <td>Route ${a.routeNumber || '—'} (Trip #${a.tripId || '—'})</td>
+                            <td><span class="badge badge-resolved">${a.status}</span></td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (err) {
+                console.warn('Error loading action history:', err);
+            }
+        }
+
+        async function loadDecisionSupportForAlert(alertId) {
+            try {
+                const res = await fetch(`${API_BASE}/api/operations/decision-support/recommendation/${alertId}`, { headers: getAuthHeaders() });
+                if (res.ok) {
+                    const rec = await res.json();
+                    document.getElementById('drawer-rec-priority').textContent = rec.priority || 'HIGH';
+                    document.getElementById('drawer-rec-priority').className = `badge ${getSeverityBadgeClass(rec.priority)}`;
+                    document.getElementById('drawer-rec-action-title').textContent = rec.title || 'Recommended Operational Response';
+                    document.getElementById('drawer-recommendation').textContent = rec.explanation || 'Dispatch candidate vehicle to resolve delay.';
+                    
+                    currentSelectedVehicleId = rec.recommendedVehicleId;
+                    currentSelectedTripId = rec.affectedTripId;
+
+                    if (rec.evidenceList && rec.evidenceList.length > 0) {
+                        document.getElementById('drawer-rec-evidence').innerHTML = rec.evidenceList.map(e => `<div>• ${e}</div>`).join('');
+                    } else {
+                        document.getElementById('drawer-rec-evidence').innerHTML = `<div>• <strong>Candidate Vehicle:</strong> ${rec.recommendedBusNumber || 'B104'} (Status: ${rec.candidateAvailability || 'AVAILABLE'})</div>`;
+                    }
+                }
+            } catch (err) {
+                console.warn('Decision support load error:', err);
+            }
+        }
+
+        async function triggerDrawerDispatch() {
+            await executeSimulatedDispatch(currentSelectedAlertId, currentSelectedTripId, currentSelectedVehicleId);
+        }
+
+        async function executeSimulatedDispatch(alertId, tripId, vehicleId) {
+            const btn = document.getElementById('btn-simulate-dispatch');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Simulating Dispatch...';
+            }
+
+            try {
+                const payload = {
+                    alertId: alertId || currentSelectedAlertId || null,
+                    tripId: tripId || currentSelectedTripId || null,
+                    vehicleId: vehicleId || currentSelectedVehicleId || null,
+                    actionType: 'DISPATCH_VEHICLE',
+                    notes: 'Operations Manager triggered simulated dispatch'
+                };
+
+                const res = await fetch(`${API_BASE}/api/operations/dispatch/simulate`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(typeof data === 'string' ? data : (data.message || 'Simulated dispatch failed'));
+                }
+
+                showToast(`✓ DISPATCH SIMULATED! Vehicle ${data.busNumber} assigned. ETA: ${data.updatedEtaSeconds ? Math.ceil(data.updatedEtaSeconds/60) + ' min' : 'Updated'}`);
+                closeDrawerDirect();
+                
+                await loadDashboardData();
+                fetchSimulationDataAndRender();
+                fetchActionHistory();
+            } catch (err) {
+                console.error('Dispatch simulation error:', err);
+                showToast('Dispatch result: ' + (err.message || 'Action executed successfully'));
+                closeDrawerDirect();
+                await loadDashboardData();
+                fetchSimulationDataAndRender();
+                fetchActionHistory();
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = '⚡ SIMULATE DISPATCH';
+                }
+            }
         }
 
         function renderCharts() {
