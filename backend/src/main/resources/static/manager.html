@@ -1057,6 +1057,10 @@
                             <div class="kpi-value" id="net-kpi-routes">50</div>
                         </div>
                         <div class="kpi-card highlight-warning">
+                            <div class="kpi-title">Simulated Vehicles</div>
+                            <div class="kpi-value" id="net-kpi-vehicles">0</div>
+                        </div>
+                        <div class="kpi-card highlight-primary">
                             <div class="kpi-title">Dispatch Coverage</div>
                             <div class="kpi-value">100%</div>
                         </div>
@@ -1065,17 +1069,20 @@
                     <div class="network-canvas-card">
                         <div class="section-header">
                             <div>
-                                <div class="section-title">GTFS Operational Network Map</div>
-                                <p style="font-size:12px;color:var(--text-muted);">Real GTFS stop projections & route connections</p>
+                                <div class="section-title">SIMULATED LIVE NETWORK MAP</div>
+                                <p style="font-size:12px;color:var(--text-muted);">Simulation-driven operational state & vehicle positions (No real GPS claimed)</p>
                             </div>
                             <div style="display:flex;gap:10px;">
                                 <select id="network-route-select" class="filter-select" onchange="highlightNetworkRoute()">
                                     <option value="ALL">All Routes</option>
                                 </select>
-                                <button class="btn btn-secondary" onclick="renderNetworkCanvas()">Reset View</button>
+                                <button class="btn btn-secondary" onclick="fetchSimulationDataAndRender()">Refresh Simulation</button>
                             </div>
                         </div>
                         <canvas id="network-canvas"></canvas>
+                        <div id="simulation-vehicle-summary" style="margin-top:16px;padding:16px;background:var(--bg-body);border:1px solid var(--border-color);border-radius:var(--radius-sm);display:none;">
+                            <!-- Dynamic vehicle detail overview -->
+                        </div>
                     </div>
                 </div>
 
@@ -1501,6 +1508,8 @@
     <!-- APP SCRIPT -->
     <script>
         const API_BASE = 'http://localhost:8081';
+        var currentTab = 'overview';
+        window.currentTab = 'overview';
         let rawAlerts = [];
         let filteredAlerts = [];
         let rawRoutes = [];
@@ -1582,6 +1591,8 @@
         }
 
         function switchTab(tabId) {
+            currentTab = tabId;
+            window.currentTab = tabId;
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
@@ -1988,6 +1999,9 @@
             }
         }
 
+        let rawSimVehicles = [];
+        let simPollingInterval = null;
+
         async function fetchStopsAndNetwork() {
             try {
                 const res = await fetch(`${API_BASE}/api/stops`, { headers: getAuthHeaders() });
@@ -1995,10 +2009,32 @@
                     rawStops = await res.json();
                     if (document.getElementById('net-kpi-stops')) document.getElementById('net-kpi-stops').textContent = rawStops.length;
                 }
-                renderNetworkCanvas();
+                await fetchSimulationDataAndRender();
+                if (!simPollingInterval) {
+                    simPollingInterval = setInterval(() => {
+                        if (currentTab === 'network') {
+                            fetchSimulationDataAndRender();
+                        }
+                    }, 3000);
+                }
             } catch (err) {
                 console.error('Error loading network stops:', err);
             }
+        }
+
+        async function fetchSimulationDataAndRender() {
+            try {
+                const res = await fetch(`${API_BASE}/api/operations/simulation/state`, { headers: getAuthHeaders() });
+                if (res.ok) {
+                    rawSimVehicles = await res.json();
+                    if (document.getElementById('net-kpi-vehicles')) {
+                        document.getElementById('net-kpi-vehicles').textContent = rawSimVehicles.length;
+                    }
+                }
+            } catch (err) {
+                console.warn('Simulation state fetch failed:', err);
+            }
+            renderNetworkCanvas();
         }
 
         function populateNetworkRouteDropdown() {
@@ -2015,7 +2051,7 @@
             const ctx = canvas.getContext('2d');
 
             canvas.width = canvas.parentElement.clientWidth - 48;
-            canvas.height = 400;
+            canvas.height = 420;
 
             ctx.fillStyle = '#0f172a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -2037,7 +2073,7 @@
                 return;
             }
 
-            // Project coordinates
+            // Calculate bounding box for stops
             let minLat = 90, maxLat = -90, minLon = 180, maxLon = -180;
             rawStops.forEach(s => {
                 const lat = Number(s.latitude);
@@ -2055,9 +2091,9 @@
                 return { x, y, name: s.name, id: s.gtfsStopId };
             });
 
-            // Draw route connections
-            ctx.strokeStyle = '#2563eb';
-            ctx.lineWidth = 2;
+            // Draw route line connections
+            ctx.strokeStyle = '#1e3a8a';
+            ctx.lineWidth = 3;
             ctx.beginPath();
             points.forEach((pt, i) => {
                 if (i === 0) ctx.moveTo(pt.x, pt.y);
@@ -2065,7 +2101,7 @@
             });
             ctx.stroke();
 
-            // Draw stop nodes
+            // Draw GTFS stop nodes
             points.forEach(pt => {
                 ctx.fillStyle = '#38bdf8';
                 ctx.beginPath();
@@ -2073,14 +2109,126 @@
                 ctx.fill();
             });
 
-            ctx.fillStyle = '#ffffff';
+            // Filter vehicles by selected route dropdown
+            const selectedRoute = document.getElementById('network-route-select')?.value || 'ALL';
+            const vehiclesToRender = selectedRoute === 'ALL'
+                ? rawSimVehicles
+                : rawSimVehicles.filter(v => v.routeNumber === selectedRoute);
+
+            // Draw simulated vehicles on the map canvas
+            vehiclesToRender.forEach(v => {
+                const lat = Number(v.currentLatitude);
+                const lon = Number(v.currentLongitude);
+                if (!lat || !lon) return;
+
+                const vx = pad + ((lon - minLon) / (maxLon - minLon || 1)) * (canvas.width - pad * 2);
+                const vy = canvas.height - pad - ((lat - minLat) / (maxLat - minLat || 1)) * (canvas.height - pad * 2);
+
+                // Vehicle status color
+                let statusColor = '#10b981'; // EN_ROUTE
+                if (v.status === 'AT_STOP') statusColor = '#06b6d4';
+                if (v.status === 'DELAYED') statusColor = '#f59e0b';
+                if (v.status === 'COMPLETED') statusColor = '#6b21a8';
+
+                // Outer pulsing ring
+                ctx.strokeStyle = statusColor;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(vx, vy, 9, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Inner filled marker
+                ctx.fillStyle = statusColor;
+                ctx.beginPath();
+                ctx.arc(vx, vy, 6, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Vehicle route badge label
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px Inter';
+                ctx.fillText(v.routeNumber || `T#${v.tripId}`, vx + 12, vy + 4);
+            });
+
+            // Status Legend & Header
+            ctx.fillStyle = '#94a3b8';
             ctx.font = '12px Inter';
-            ctx.fillText(`Projected ${points.length} GTFS Stop Coordinates across Chennai Transit Network`, 20, canvas.height - 20);
+            ctx.fillText(`SIMULATED LIVE NETWORK — Projected ${points.length} GTFS Stops & ${vehiclesToRender.length} Active Simulated Vehicles`, 20, 25);
+
+            // Vehicle summary card panel
+            renderSimulationVehicleSummary(vehiclesToRender);
+        }
+
+        function renderSimulationVehicleSummary(vehicles) {
+            const container = document.getElementById('simulation-vehicle-summary');
+            if (!container) return;
+
+            if (!vehicles || vehicles.length === 0) {
+                container.style.display = 'block';
+                container.innerHTML = `<div style="color:var(--text-muted);font-size:13px;">No active simulated vehicles currently running on selected route.</div>`;
+                return;
+            }
+
+            container.style.display = 'block';
+            const sampleVehicles = vehicles.slice(0, 4);
+            container.innerHTML = `
+                <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em;">
+                    Simulated Vehicle Operational State & Downstream ETA (Active Count: ${vehicles.length})
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));gap:12px;">
+                    ${sampleVehicles.map(v => `
+                        <div style="background:#ffffff;padding:12px;border-radius:6px;border:1px solid var(--border-color);font-size:12px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                                <span style="font-weight:700;color:var(--primary);">${v.busNumber || 'BUS-' + v.tripId}</span>
+                                <div>
+                                    <span class="badge ${v.status === 'DELAYED' ? 'badge-critical' : 'badge-new'}">${v.status}</span>
+                                    <span id="conf-badge-${v.tripId}" style="margin-left:4px;"></span>
+                                </div>
+                            </div>
+                            <div style="color:var(--text-main);font-weight:600;margin-bottom:4px;">Route ${v.routeNumber} — ${v.routeName}</div>
+                            <div style="color:var(--text-muted);">Current: <strong>${v.currentStopName}</strong></div>
+                            <div style="color:var(--text-muted);">Next: <strong>${v.nextStopName}</strong></div>
+                            <div style="color:var(--primary);font-weight:600;margin-top:6px;" id="eta-badge-${v.tripId}">
+                                ETA to next stop: <em>Calculating...</em>
+                            </div>
+                            <div style="color:var(--text-subtle);font-size:11px;margin-top:4px;display:flex;justify-content:space-between;">
+                                <span>Delay: +${v.delaySeconds || 0}s</span>
+                                <span>Seq #${v.stopSequence}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            // Asynchronously fetch ETA for rendered vehicles
+            sampleVehicles.forEach(async (v) => {
+                if (!v.nextStopId) return;
+                try {
+                    const res = await fetch(`${API_BASE}/api/operations/eta/trip/${v.tripId}/stop/${v.nextStopId}`, { headers: getAuthHeaders() });
+                    if (res.ok) {
+                        const etaData = await res.json();
+                        const etaMinutes = Math.max(1, Math.ceil(etaData.etaSeconds / 60));
+                        const etaBadge = document.getElementById(`eta-badge-${v.tripId}`);
+                        const confBadge = document.getElementById(`conf-badge-${v.tripId}`);
+                        if (etaBadge) {
+                            etaBadge.innerHTML = `ETA to next stop: <strong>${etaMinutes} min</strong> (${etaData.etaSeconds}s)`;
+                        }
+                        if (confBadge) {
+                            let confBg = '#dcfce7';
+                            let confColor = '#15803d';
+                            if (etaData.confidence === 'MEDIUM') { confBg = '#fef3c7'; confColor = '#b45309'; }
+                            if (etaData.confidence === 'LOW') { confBg = '#fee2e2'; confColor = '#b91c1c'; }
+                            confBadge.innerHTML = `<span style="background:${confBg};color:${confColor};padding:2px 6px;border-radius:4px;font-weight:700;font-size:10px;">${etaData.confidence}</span>`;
+                        }
+                    }
+                } catch (err) {
+                    console.warn('ETA fetch error for trip ' + v.tripId, err);
+                }
+            });
         }
 
         function highlightNetworkRoute() {
             renderNetworkCanvas();
-            showToast('Highlighted route on Live Network Schematic');
+            showToast('Updated Live Network view for selected route');
         }
 
         function renderInsights() {
